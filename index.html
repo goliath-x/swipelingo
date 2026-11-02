@@ -26,12 +26,21 @@ h1{font-size:24px;margin:8px 0}p,.muted{color:#aab0c9}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}
 .toolbar span{font-size:12px;color:#b4bad0}
 input{background:#282d48;color:white;border:1px solid #555a75;border-radius:11px;padding:11px;outline:none}
-input{width:100%;margin:6px 0}/* Animated mode controls */
-.mode-switch{display:flex;align-items:center;gap:5px}
-.mode-btn{border:1px solid #454a6a;background:#292e4a;color:#fff;border-radius:11px;height:36px;min-width:41px;padding:0 7px;font-size:17px;cursor:pointer}
-.mode-btn.active{background:#b768da;border-color:#e3bafa;box-shadow:0 5px 15px #b768da40}
-.mode-btn.pulse{animation:modePulse .28s ease-out}
+input{width:100%;margin:6px 0}/* Minimal, borderless language mode selector */
+.mode-switch{display:flex;align-items:center;gap:17px}
+.mode-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:2px;min-width:38px;height:40px;padding:0 2px;border:0;background:transparent;color:#a9a3c0;font-size:21px;line-height:1;opacity:.57;filter:saturate(.75);transition:opacity .18s ease,transform .18s ease,filter .18s ease;-webkit-tap-highlight-color:transparent}
+.mode-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.mode-btn.active{opacity:1;color:#ceaaff;filter:none}
+.mode-btn.active::after{content:"";position:absolute;width:14px;height:2px;border-radius:2px;background:#ceaaff;bottom:1px;left:50%;transform:translateX(-50%)}
+.mode-btn.pulse{animation:modePulse .25s ease-out}
 @keyframes modePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+@media(max-width:360px){.mode-switch{gap:9px}.mode-btn{min-width:34px;font-size:19px}}
+
+/* Crisp vector flags independent of operating-system emoji rendering */
+.flag-pair{display:flex;align-items:center;gap:4px}
+.flag-icon{display:block;width:23px;height:16px;flex:none;border-radius:2px;overflow:hidden}
+.flag-arrow{font-size:11px;color:#aab0c9;font-weight:700}
+
 /* Live deck: next cards already contain their real text */
 .deck{height:clamp(185px,calc(100dvh - 256px),420px);position:relative;perspective:1200px;touch-action:none;user-select:none;-webkit-user-select:none;isolation:isolate;--progress:0}
 .deck-card{position:absolute;left:8%;top:6%;width:84%;height:87%;border-radius:25px;transform-origin:center;will-change:transform;transform-style:preserve-3d}
@@ -107,11 +116,11 @@ function cardMarkup(c,depth){
  const d=direction(c),front=d==="en-tr"?c.en:c.tr,back=d==="en-tr"?c.tr:c.en;
  const clazz=depth===0?"motion":"depth-"+depth;
  const style=`--color:${cardColor(c)};--base-angle:${cardAngle(c)}deg;--angle:${cardAngle(c)}deg`;
- return `<div class="deck-card ${clazz}" style="${style}"><div class="inner"><div class="face"><div class="lang">${d==="en-tr"?"İNGİLİZCE":"TÜRKÇE"}</div><div class="word">${esc(front)}</div><div class="hint">✨ Çevirmek için dokun</div></div><div class="face back"><div class="lang">${d==="en-tr"?"TÜRKÇE":"İNGİLİZCE"}</div><div class="word">${esc(back)}</div><div class="hint">← Bilmiyorum · Biliyorum →</div></div></div></div>`;
+ return `<div class="deck-card ${clazz}" style="${style}"><div class="inner"><div class="face"><div class="lang">${d==="en-tr"?"English":"Turkish"}</div><div class="word">${esc(front)}</div><div class="hint">✨ Çevirmek için dokun</div></div><div class="face back"><div class="lang">${d==="en-tr"?"Turkish":"English"}</div><div class="word">${esc(back)}</div><div class="hint">← Bilmiyorum · Biliyorum →</div></div></div></div>`;
 }
 function study(){
  const t=totals(),c=card();
- layout(`<div class="stats"><div class="stat"><b>${allCards().length}</b><small>Toplam anlam</small></div><div class="stat"><b style="color:#7ee4b2">${t.yes}</b><small>Biliyorum</small></div><div class="stat"><b style="color:#ff8c9e">${t.no}</b><small>Bilmiyorum</small></div></div><div class="toolbar"><span>${c?`${pos+1} / ${queue.length}`:"Hazır"}</span><div class="mode-switch"><button class="mode-btn ${mode==="mixed"?"active":""}" data-mode="mixed" aria-label="Karışık">🔀</button><button class="mode-btn ${mode==="en-tr"?"active":""}" data-mode="en-tr" aria-label="İngilizceden Türkçeye">🇬🇧→🇹🇷</button><button class="mode-btn ${mode==="tr-en"?"active":""}" data-mode="tr-en" aria-label="Türkçeden İngilizceye">🇹🇷→🇬🇧</button></div></div><div id="slot"></div>`);
+ layout(`<div class="stats"><div class="stat"><b>${allCards().length}</b><small>Toplam anlam</small></div><div class="stat"><b style="color:#7ee4b2">${t.yes}</b><small>Biliyorum</small></div><div class="stat"><b style="color:#ff8c9e">${t.no}</b><small>Bilmiyorum</small></div></div><div class="toolbar"><span>${c?`${pos+1} / ${queue.length}`:"Hazır"}</span><div class="mode-switch"><button type="button" class="mode-btn ${mode==="mixed"?"active":""}" data-mode="mixed" aria-label="Karışık" title="Karışık"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h2.5a6 6 0 0 0 5-2.7l5-7.6A6 6 0 0 1 19.5 5H22"/><path d="M2 6h2.5a6 6 0 0 1 5 2.7"/><path d="M14.5 15.3a6 6 0 0 0 5 2.7H22"/></svg></button><button type="button" class="mode-btn ${mode==="en-tr"?"active":""}" data-mode="en-tr" aria-label="İngilizceden Türkçeye" title="EN → TR"><span class="flag-pair"><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="İngiltere bayrağı"><rect width="60" height="40" fill="#fff"/><path d="M25 0h10v40H25zM0 15h60v10H0z" fill="#CE1124"/></svg><span class="flag-arrow">→</span><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="Türkiye bayrağı"><rect width="60" height="40" fill="#E30A17"/><circle cx="25" cy="20" r="12" fill="white"/><circle cx="29" cy="20" r="9.5" fill="#E30A17"/><path d="M39 13.7 L40.8 18 L45.5 18.3 L41.9 21.4 L43 25.9 L39 23.4 L35 25.9 L36.1 21.4 L32.5 18.3 L37.2 18 Z" fill="white"/></svg></span></button><button type="button" class="mode-btn ${mode==="tr-en"?"active":""}" data-mode="tr-en" aria-label="Türkçeden İngilizceye" title="TR → EN"><span class="flag-pair"><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="Türkiye bayrağı"><rect width="60" height="40" fill="#E30A17"/><circle cx="25" cy="20" r="12" fill="white"/><circle cx="29" cy="20" r="9.5" fill="#E30A17"/><path d="M39 13.7 L40.8 18 L45.5 18.3 L41.9 21.4 L43 25.9 L39 23.4 L35 25.9 L36.1 21.4 L32.5 18.3 L37.2 18 Z" fill="white"/></svg><span class="flag-arrow">→</span><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="İngiltere bayrağı"><rect width="60" height="40" fill="#fff"/><path d="M25 0h10v40H25zM0 15h60v10H0z" fill="#CE1124"/></svg></span></button></div></div><div id="slot"></div>`);
  document.querySelectorAll("[data-mode]").forEach(b=>{b.onclick=()=>{
   if(busy)return;mode=b.dataset.mode;flipped=false;
   document.querySelectorAll("[data-mode]").forEach(el=>el.classList.toggle("active",el===b));
