@@ -1,787 +1,202 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#101323" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101323">
 <title>SwipeLingo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-html,body{
-  margin:0;
-  min-height:100%;
-  background:#101323;
-  color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-}
+html,body{margin:0;min-height:100%;background:#101323;color:white;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
 body{overflow-x:hidden}
-button,input{font:inherit}
-button{cursor:pointer}
-#app{
-  max-width:520px;
-  margin:0 auto;
-  padding:12px 16px 14px;
-  min-height:100dvh;
-}
-
-.topbar{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  margin-bottom:12px;
-}
-.logo{
-  font-size:24px;
-  font-weight:900;
-  letter-spacing:-1px;
-  line-height:1;
-}
+button,input,select{font:inherit}button{cursor:pointer}
+#app{max-width:520px;margin:0 auto;padding:10px 16px 14px;min-height:100dvh}
+.brand-header{display:flex;align-items:center;justify-content:center;gap:8px;min-height:30px;white-space:nowrap}
+.logo{font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1.2}
 .logo span{color:#ceaaff}
 
-.nav{
-  display:flex;
-  gap:8px;
-  margin:10px 0 12px;
-}
-.nav button{
-  flex:1;
-  min-width:0;
-  border:0;
-  border-radius:13px;
-  padding:11px 8px;
-  font-size:15px;
-  font-weight:900;
-  letter-spacing:-.2px;
-  transition:transform .18s ease, opacity .18s ease, background .18s ease, color .18s ease;
-}
-.nav button:active{transform:scale(.97)}
-.nav-work{
-  background:#b768da;
-  color:#fff;
-}
-.nav-add{
-  background:#fff;
-  color:#b768da;
-}
-
-.stats{
-  display:flex;
-  gap:8px;
-  margin:8px 0 10px;
-}
-.stat{
-  flex:1;
-  text-align:center;
-  background:#22263e;
-  border-radius:12px;
-  padding:9px 4px;
-}
-.stat b{
-  display:block;
-  font-size:21px;
-}
-.stat small{
-  color:#aaa;
-  font-size:10px;
-}
-
-.toolbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin:8px 0 10px;
-}
-.progress-text{
-  font-size:12px;
-  color:#b4bad0;
-}
-
-.mode-switch{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  justify-content:flex-end;
-}
-.mode-btn{
-  min-width:52px;
-  height:42px;
-  border:0;
-  border-radius:14px;
-  background:#282d48;
-  color:#fff;
-  font-size:20px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:0 10px;
-  box-shadow:0 0 0 1px #444b70 inset;
-  transition:transform .18s ease, background .18s ease, box-shadow .18s ease, opacity .18s ease;
-}
-.mode-btn.active{
-  background:#b768da;
-  box-shadow:0 0 0 1px #dcb8ff inset, 0 8px 18px rgba(183,104,218,.28);
-}
-.mode-btn.tap-animate{
-  animation:modeTap .28s ease;
-}
-@keyframes modeTap{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.11)}
-  100%{transform:scale(1)}
-}
-
-.deck{
-  height:clamp(200px,calc(100dvh - 255px),430px);
-  position:relative;
-  perspective:1200px;
-  touch-action:none;
-  user-select:none;
-  -webkit-user-select:none;
-}
-.motion{
-  position:absolute;
-  inset:0;
-  transform:translateX(0) rotate(0);
-  transition:transform .25s ease,opacity .25s ease;
-  will-change:transform;
-}
-.inner{
-  position:relative;
-  width:100%;
-  height:100%;
-  transform-style:preserve-3d;
-  transition:transform .55s cubic-bezier(.2,.8,.2,1);
-}
+nav{display:flex;gap:8px;background:transparent;padding:0;border-radius:11px;margin:10px 0}
+nav button{flex:1;min-width:0;padding:9px 3px;border:0;border-radius:10px;background:#ffffff;color:#b768da;font-size:20px;font-weight:900;letter-spacing:-.6px;line-height:22px}
+nav button.active{background:#b768da;color:#ffffff}
+h1{font-size:24px;margin:8px 0}p,.muted{color:#aab0c9}
+.stats{display:flex;gap:8px;margin:10px 0}
+.stat{flex:1;text-align:center;background:#22263e;border-radius:12px;padding:9px 4px}
+.stat b{display:block;font-size:21px}.stat small{color:#aaa;font-size:10px}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}
+.toolbar span{font-size:12px;color:#b4bad0}
+input{background:#282d48;color:white;border:1px solid #555a75;border-radius:11px;padding:11px;outline:none}
+input{width:100%;margin:6px 0}/* Animated mode controls */
+.mode-switch{display:flex;align-items:center;gap:5px}
+.mode-btn{border:1px solid #454a6a;background:#292e4a;color:#fff;border-radius:11px;height:36px;min-width:41px;padding:0 7px;font-size:17px;cursor:pointer}
+.mode-btn.active{background:#b768da;border-color:#e3bafa;box-shadow:0 5px 15px #b768da40}
+.mode-btn.pulse{animation:modePulse .28s ease-out}
+@keyframes modePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+/* Live deck: next cards already contain their real text */
+.deck{height:clamp(185px,calc(100dvh - 256px),420px);position:relative;perspective:1200px;touch-action:none;user-select:none;-webkit-user-select:none;isolation:isolate;--progress:0}
+.deck-card{position:absolute;left:8%;top:6%;width:84%;height:87%;border-radius:25px;transform-origin:center;will-change:transform;transform-style:preserve-3d}
+.deck-card.depth-2{z-index:0;pointer-events:none;transform:translate(calc(-13px + var(--progress)*3px),calc(9px - var(--progress)*6px)) rotate(calc(-10deg + var(--progress)*18deg)) scale(calc(.94 + var(--progress)*.045));opacity:calc(.82 + var(--progress)*.13)}
+.deck-card.depth-1{z-index:1;pointer-events:none;transform:translate(calc(15px - var(--progress)*15px),calc(3px - var(--progress)*3px)) rotate(calc(8deg + (var(--angle) - 8deg)*var(--progress))) scale(calc(.965 + var(--progress)*.035));opacity:calc(.92 + var(--progress)*.08)}
+.deck-card.motion{z-index:2;transform:translateX(var(--drag-x,0px)) rotate(calc(var(--base-angle, -2deg) + var(--drag-rot,0deg)));opacity:var(--front-opacity,1)}
+.deck-card .inner{--card:var(--color)}
+.deck.settling .deck-card{transition:transform .32s cubic-bezier(.2,.8,.25,1),opacity .32s ease}
+.deck-card .face{box-shadow:0 14px 40px #0005}
+.inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.8,.2,1)}
 .inner.flip{transform:rotateY(180deg)}
-.face{
-  position:absolute;
-  inset:0;
-  border-radius:25px;
-  background:var(--card);
-  padding:24px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  text-align:center;
-  backface-visibility:hidden;
-  -webkit-backface-visibility:hidden;
-  box-shadow:0 14px 40px #0005;
-  overflow:hidden;
-}
+.face{position:absolute;inset:0;border-radius:25px;background:var(--card);padding:24px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 14px 40px #0005;overflow:hidden}
 .back{transform:rotateY(180deg)}
-.lang{
-  position:absolute;
-  top:22px;
-  left:0;
-  right:0;
-  font-size:12px;
-  letter-spacing:2px;
-  font-weight:800;
-}
-.word{
-  font-size:clamp(28px,8vw,48px);
-  font-weight:850;
-  overflow-wrap:anywhere;
-  line-height:1.18;
-}
-.hint{
-  position:absolute;
-  bottom:22px;
-  left:8px;
-  right:8px;
-  font-size:12px;
-  opacity:.9;
-}
-.legend{
-  display:flex;
-  justify-content:space-between;
-  gap:5px;
-  color:#b5bad1;
-  font-size:11px;
-  margin-top:12px;
-}
-.note{
-  text-align:center;
-  color:#818aa7;
-  font-size:10px;
-  margin-top:12px;
-}
-
-.panel{
-  background:#20243b;
-  border-radius:18px;
-  padding:16px;
-  margin-top:15px;
-}
-h1{
-  font-size:22px;
-  margin:5px 0 10px;
-}
-p, .muted{
-  color:#aab0c9;
-}
-label{
-  display:block;
-  margin:15px 0 5px;
-  font-size:13px;
-  font-weight:bold;
-}
-input{
-  width:100%;
-  margin:6px 0;
-  background:#282d48;
-  color:white;
-  border:1px solid #555a75;
-  border-radius:11px;
-  padding:11px;
-  outline:none;
-}
-.primary{
-  width:100%;
-  padding:14px;
-  background:#d3b7ff;
-  color:#16142a;
-  border:0;
-  border-radius:12px;
-  font-weight:800;
-  margin-top:15px;
-}
-.secondary{
-  background:#393d5d;
-  color:white;
-  border:0;
-  border-radius:11px;
-  padding:11px;
-}
-.meaning{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-.meaning input{
-  flex:1;
-  min-width:0;
-}
-.remove{
-  background:#603444;
-  color:white;
-  border:0;
-  border-radius:10px;
-  padding:12px;
-}
-.empty{
-  text-align:center;
-  padding:35px 10px;
-}
-
-.feedback{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  pointer-events:none;
-  z-index:50;
-  opacity:0;
-  visibility:hidden;
-}
-.feedback.show{
-  visibility:visible;
-  animation:feedback .65s ease forwards;
-}
-.feedback-symbol{
-  width:116px;
-  height:116px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:78px;
-  font-weight:800;
-  color:white;
-  box-shadow:0 12px 45px #0005;
-}
-.feedback.yes .feedback-symbol{background:#27c979}
-.feedback.no .feedback-symbol{background:#f05265}
-@keyframes feedback{
-  0%{opacity:0;transform:scale(.5)}
-  18%{opacity:1;transform:scale(1.12)}
-  50%{opacity:1;transform:scale(1)}
-  100%{opacity:0;transform:scale(.9)}
-}
-
-@media (min-width:600px){
-  #app{padding-top:8px;padding-bottom:6px}
-  .deck{height:clamp(170px,calc(100dvh - 210px),420px)}
-  .legend{margin-top:8px}
-  .note{margin-top:8px}
-}
-@media (max-height:520px){
-  #app{padding-top:6px}
-  .stats{margin:6px 0}
-  .toolbar{margin:6px 0}
-  .deck{height:max(150px,calc(100dvh - 195px))}
-}
+.word{font-size:clamp(28px,8vw,48px);font-weight:850;overflow-wrap:anywhere;line-height:1.18}
+.lang{position:absolute;top:22px;left:0;right:0;font-size:12px;letter-spacing:2px;font-weight:800}
+.hint{position:absolute;bottom:22px;left:8px;right:8px;font-size:12px;opacity:.9}
+.legend{display:flex;justify-content:space-between;gap:5px;color:#b5bad1;font-size:11px;margin-top:12px}
+.note{text-align:center;color:#818aa7;font-size:10px;margin-top:12px}
+.panel{background:#20243b;border-radius:18px;padding:16px;margin-top:15px}
+label{display:block;margin:15px 0 5px;font-size:13px;font-weight:bold}
+.primary{width:100%;padding:14px;background:#d3b7ff;color:#16142a;border:0;border-radius:12px;font-weight:800;margin-top:15px}
+.secondary{background:#393d5d;color:white;border:0;border-radius:11px;padding:11px}
+.meaning{display:flex;gap:8px;align-items:center}.meaning input{flex:1;min-width:0}
+.remove{background:#603444;color:white;border:0;border-radius:10px;padding:12px}
+.item{padding:14px 0;border-bottom:1px solid #41455d;display:flex;justify-content:space-between;gap:10px}
+.item p{font-size:13px;margin:5px 0;overflow-wrap:anywhere}
+.item button{background:#393e5b;color:white;border:0;border-radius:9px;padding:9px}
+.empty{text-align:center;padding:35px 10px}
+@media(min-width:600px){#app{padding-top:8px;padding-bottom:6px}nav{margin:7px 0}.stats{margin:7px 0}.toolbar{margin:7px 0}.deck{height:clamp(160px,calc(100dvh - 212px),420px)}.legend{margin-top:8px}.note{margin-top:7px}}
+@media(max-height:520px){#app{padding-top:6px}nav{margin:6px 0}.stats{margin:6px 0}.stat{padding:5px}.toolbar{margin:6px 0}.deck{height:max(145px,calc(100dvh - 205px))}.legend,.note{margin-top:6px}}
+@media(max-width:360px){.brand-header{gap:5px}.logo{font-size:21px}}
 </style>
 </head>
 <body>
 <div id="app"></div>
 
-<div id="feedback" class="feedback">
-  <div class="feedback-symbol"></div>
-</div>
-
 <script>
 (()=>{
 "use strict";
-
-const tg = window.Telegram?.WebApp;
-try{
-  tg?.ready();
-  tg?.expand();
-}catch(e){}
-
-const KEY = "swipelingo.v1";
-
-const colors = [
-  "#b768da","#ed6796","#f38c71","#d5a142",
-  "#51b6ad","#418ed0","#7775d8","#ac6ad0",
-  "#db5f79","#cc7654","#6fae69","#37a0b8",
-  "#6576bf","#b66f9c","#bca345","#54b9a0",
-  "#bb6478","#6786da","#986bcc","#da7768",
-  "#7ca955","#4aa2ce","#b17a46","#8a8ad5"
-];
-
-const $ = s => document.querySelector(s);
-const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
-  "&":"&amp;",
-  "<":"&lt;",
-  ">":"&gt;",
-  '"':"&quot;",
-  "'":"&#39;"
-}[c]));
-
-const uid = () => (
-  crypto.randomUUID?.() ||
-  Date.now() + "-" + Math.random()
-);
-
+const tg=window.Telegram?.WebApp;
+try{tg?.ready();tg?.expand()}catch(e){}
+const KEY="swipelingo.v1";
+const colors=["#b768da","#ed6796","#f38c71","#d5a142","#51b6ad","#418ed0","#7775d8","#ac6ad0","#db5f79","#cc7654","#6fae69","#37a0b8","#6576bf","#b66f9c","#bca345","#54b9a0","#bb6478","#6786da","#986bcc","#da7768","#7ca955","#4aa2ce","#b17a46","#8a8ad5"];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>crypto.randomUUID?.()||Date.now()+"-"+Math.random();
 let data;
-try{
-  data = JSON.parse(localStorage.getItem(KEY));
-}catch(e){}
+try{data=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!data||!Array.isArray(data.words))data={words:[],reviews:{}};
+if(!data.reviews)data.reviews={};
+let page="study",mode="mixed",queue=[],pos=0,flipped=false,busy=false,editing=null,meanings=[""];
 
-if(!data || !Array.isArray(data.words)){
-  data = { words: [], reviews: {} };
-}
-if(!data.reviews) data.reviews = {};
-
-let page = "study";
-let mode = "mixed";
-let queue = [];
-let pos = 0;
-let flipped = false;
-let busy = false;
-let editing = null;
-let meanings = [""];
-
-function save(){
-  try{
-    localStorage.setItem(KEY, JSON.stringify(data));
-  }catch(e){
-    alert("Veriler kaydedilemedi.");
-  }
-}
-
-function allCards(){
-  return data.words.flatMap(w =>
-    w.meanings.map(m => ({
-      id: m.id,
-      en: w.en,
-      tr: m.tr
-    }))
-  );
-}
-
-function shuffle(a){
-  for(let i=a.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function resetDeck(){
-  queue = shuffle(allCards());
-  pos = 0;
-  flipped = false;
-}
-
-function card(){
-  return queue[pos];
-}
-
-function hash(s){
-  return [...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0);
-}
-
-function direction(c){
-  if(mode !== "mixed") return mode;
-  return hash(c.id) % 2 ? "en-tr" : "tr-en";
-}
-
-function totals(){
-  let yes = 0, no = 0;
-  Object.values(data.reviews).forEach(r => {
-    yes += r.yes || 0;
-    no += r.no || 0;
-  });
-  return { yes, no };
-}
-
-function modeLabel(m){
-  if(m === "mixed") return "🔀";
-  if(m === "en-tr") return "🇬🇧→🇹🇷";
-  return "🇹🇷→🇬🇧";
-}
-
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("Veriler kaydedilemedi.")}}
+function allCards(){return data.words.flatMap(w=>w.meanings.map(m=>({id:m.id,en:w.en,tr:m.tr})))}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function resetDeck(){queue=shuffle(allCards());pos=0;flipped=false}
+function card(){return queue[pos]}
+function hash(s){return [...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0)}
+function cardColor(c){return colors[hash(c.id)%colors.length]}
+function cardAngle(c){return [-3,2.5,-1.5,4,-4.2,1.8][hash(c.id)%6]}
+function direction(c){return mode!=="mixed"?mode:(hash(c.id)%2?"en-tr":"tr-en")}
+function totals(){let yes=0,no=0;Object.values(data.reviews).forEach(r=>{yes+=r.yes||0;no+=r.no||0});return {yes,no}}
 function layout(content){
-  $("#app").innerHTML = `
-    <div class="topbar">
-      <div class="logo">Swipe<span>Lingo</span> ✦</div>
-    </div>
-
-    <div class="nav">
-      <button data-page="study" class="nav-work">Work</button>
-      <button data-page="add" class="nav-add">Add</button>
-    </div>
-
-    ${content}
-
-    <div class="note">SwipeLingo @copyright 2026</div>
-  `;
-
-  document.querySelectorAll("[data-page]").forEach(b=>{
-    b.onclick = ()=>{
-      if(busy) return;
-      page = b.dataset.page;
-      editing = null;
-      meanings = [""];
-      render();
-    };
-  });
+$("#app").innerHTML=`
+<header class="brand-header"><div class="logo">Swipe<span>Lingo</span> ✦</div></header>
+<nav><button data-page="study" class="${page==="study"?"active":""}">Work</button><button data-page="add" class="${page==="add"?"active":""}">Add</button></nav>
+${content}<div class="note">SwipeLingo @copyright 2026</div>`;
+document.querySelectorAll("[data-page]").forEach(b=>{b.onclick=()=>{if(busy)return;page=b.dataset.page;editing=null;meanings=[""];render()}})
 }
-
-function render(){
-  if(page === "study") study();
-  else addScreen();
+function render(){if(page==="study")study();else if(page==="add")addScreen();else if(page==="list")listScreen()}
+function cardMarkup(c,depth){
+ if(!c)return "";
+ const d=direction(c),front=d==="en-tr"?c.en:c.tr,back=d==="en-tr"?c.tr:c.en;
+ const clazz=depth===0?"motion":"depth-"+depth;
+ const style=`--color:${cardColor(c)};--base-angle:${cardAngle(c)}deg;--angle:${cardAngle(c)}deg`;
+ return `<div class="deck-card ${clazz}" style="${style}"><div class="inner"><div class="face"><div class="lang">${d==="en-tr"?"İNGİLİZCE":"TÜRKÇE"}</div><div class="word">${esc(front)}</div><div class="hint">✨ Çevirmek için dokun</div></div><div class="face back"><div class="lang">${d==="en-tr"?"TÜRKÇE":"İNGİLİZCE"}</div><div class="word">${esc(back)}</div><div class="hint">← Bilmiyorum · Biliyorum →</div></div></div></div>`;
 }
-
 function study(){
-  const t = totals();
-  const c = card();
-
-  layout(`
-    <div class="stats">
-      <div class="stat">
-        <b>${allCards().length}</b>
-        <small>Total</small>
-      </div>
-      <div class="stat">
-        <b style="color:#7ee4b2">${t.yes}</b>
-        <small>Known</small>
-      </div>
-      <div class="stat">
-        <b style="color:#ff8c9e">${t.no}</b>
-        <small>Unknown</small>
-      </div>
-    </div>
-
-    <div class="toolbar">
-      <span class="progress-text">${c ? `${pos+1} / ${queue.length}` : "Ready"}</span>
-      <div class="mode-switch">
-        <button class="mode-btn ${mode==="mixed"?"active":""}" data-mode="mixed" aria-label="Karışık">${modeLabel("mixed")}</button>
-        <button class="mode-btn ${mode==="en-tr"?"active":""}" data-mode="en-tr" aria-label="English to Turkish">${modeLabel("en-tr")}</button>
-        <button class="mode-btn ${mode==="tr-en"?"active":""}" data-mode="tr-en" aria-label="Turkish to English">${modeLabel("tr-en")}</button>
-      </div>
-    </div>
-
-    <div id="slot"></div>
-  `);
-
-  document.querySelectorAll("[data-mode]").forEach(btn=>{
-    btn.onclick = ()=>{
-      if(busy) return;
-      mode = btn.dataset.mode;
-      flipped = false;
-      btn.classList.remove("tap-animate");
-      void btn.offsetWidth;
-      btn.classList.add("tap-animate");
-      study();
-    };
-  });
-
-  if(!c){
-    $("#slot").innerHTML = `
-      <div class="empty">
-        <h2>${data.words.length ? "🎉 Cards completed" : "📚 No words yet"}</h2>
-        <button class="primary" id="start">
-          ${data.words.length ? "Restart" : "Add word"}
-        </button>
-      </div>
-    `;
-
-    $("#start").onclick = ()=>{
-      if(data.words.length) resetDeck();
-      else page = "add";
-      render();
-    };
-    return;
-  }
-
-  const d = direction(c);
-  const front = d === "en-tr" ? c.en : c.tr;
-  const back = d === "en-tr" ? c.tr : c.en;
-  const color = colors[(hash(c.id)+pos)%24];
-
-  $("#slot").innerHTML = `
-    <div class="deck" id="deck">
-      <div class="motion" id="motion">
-        <div class="inner" id="inner" style="--card:${color}">
-          <div class="face">
-            <div class="lang">${d==="en-tr" ? "İNGİLİZCE" : "TÜRKÇE"}</div>
-            <div class="word">${esc(front)}</div>
-            <div class="hint">✨ Çevirmek için dokun</div>
-          </div>
-          <div class="face back">
-            <div class="lang">${d==="en-tr" ? "TÜRKÇE" : "İNGİLİZCE"}</div>
-            <div class="word">${esc(back)}</div>
-            <div class="hint">← Bilmiyorum · Biliyorum →</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="legend">
-      <span>← Bilmiyorum</span>
-      <span>Dokun: Çevir</span>
-      <span>Biliyorum →</span>
-    </div>
-  `;
-
-  bindSwipe();
+ const t=totals(),c=card();
+ layout(`<div class="stats"><div class="stat"><b>${allCards().length}</b><small>Toplam anlam</small></div><div class="stat"><b style="color:#7ee4b2">${t.yes}</b><small>Biliyorum</small></div><div class="stat"><b style="color:#ff8c9e">${t.no}</b><small>Bilmiyorum</small></div></div><div class="toolbar"><span>${c?`${pos+1} / ${queue.length}`:"Hazır"}</span><div class="mode-switch"><button class="mode-btn ${mode==="mixed"?"active":""}" data-mode="mixed" aria-label="Karışık">🔀</button><button class="mode-btn ${mode==="en-tr"?"active":""}" data-mode="en-tr" aria-label="İngilizceden Türkçeye">🇬🇧→🇹🇷</button><button class="mode-btn ${mode==="tr-en"?"active":""}" data-mode="tr-en" aria-label="Türkçeden İngilizceye">🇹🇷→🇬🇧</button></div></div><div id="slot"></div>`);
+ document.querySelectorAll("[data-mode]").forEach(b=>{b.onclick=()=>{
+  if(busy)return;mode=b.dataset.mode;flipped=false;
+  document.querySelectorAll("[data-mode]").forEach(el=>el.classList.toggle("active",el===b));
+  b.classList.remove("pulse");void b.offsetWidth;b.classList.add("pulse");
+  setTimeout(()=>{if(!busy&&page==="study")study()},275);
+ }});
+ if(!c){
+  $("#slot").innerHTML=`<div class="empty"><h2>${data.words.length?"🎉 Kartlar tamamlandı":"📚 Henüz kelime yok"}</h2><button class="primary" id="start">${data.words.length?"Tekrar başlat":"Kelime ekle"}</button></div>`;
+  $("#start").onclick=()=>{if(data.words.length)resetDeck();else page="add";render()};return;
+ }
+ $("#slot").innerHTML=`<div class="deck" id="deck">${cardMarkup(queue[pos+2],2)}${cardMarkup(queue[pos+1],1)}${cardMarkup(c,0)}</div><div class="legend"><span>← Bilmiyorum</span><span>Dokun: Çevir</span><span>Biliyorum →</span></div>`;
+ bindSwipe();
 }
-
-function flip(){
-  if(busy) return;
-  flipped = !flipped;
-  $("#inner")?.classList.toggle("flip", flipped);
+function flip(){if(busy)return;flipped=!flipped;$("#deck .motion .inner")?.classList.toggle("flip",flipped)}
+function setProgress(deck,dx){
+ const limit=Math.max(110,deck.clientWidth*.42);
+ const p=Math.min(1,Math.abs(dx)/limit);
+ deck.style.setProperty("--progress",p.toFixed(4));
+ deck.style.setProperty("--drag-x",dx+"px");
+ deck.style.setProperty("--drag-rot",Math.max(-25,Math.min(25,dx/15))+"deg");
+ deck.style.setProperty("--front-opacity",(1-.18*p).toFixed(3));
 }
-
-function showFeedback(known){
-  const f = $("#feedback");
-  f.className = "feedback " + (known ? "yes" : "no");
-  f.querySelector(".feedback-symbol").textContent = known ? "✓" : "×";
-  void f.offsetWidth;
-  f.classList.add("show");
-}
-
 function review(known){
-  if(busy || !card()) return;
-  busy = true;
-
-  const c = card();
-  const key = c.id + "|" + direction(c);
-
-  if(!data.reviews[key]){
-    data.reviews[key] = { yes:0, no:0 };
-  }
-
-  data.reviews[key][known ? "yes" : "no"]++;
-  save();
-
-  showFeedback(known);
-
-  const m = $("#motion");
-  m.style.transition = "transform .3s ease,opacity .3s ease";
-  m.style.transform = `translateX(${known ? 650 : -650}px) rotate(${known ? 23 : -23}deg)`;
-  m.style.opacity = "0";
-
-  try{
-    tg?.HapticFeedback?.impactOccurred("light");
-  }catch(e){}
-
-  setTimeout(()=>{
-    pos++;
-    flipped = false;
-    busy = false;
-    study();
-  }, 650);
+ if(busy||!card())return;
+ busy=true;
+ const c=card(),key=c.id+"|"+direction(c);
+ if(!data.reviews[key])data.reviews[key]={yes:0,no:0};
+ data.reviews[key][known?"yes":"no"]++;
+ save();
+ const deck=$("#deck");
+ deck.classList.add("settling");
+ const distance=deck.clientWidth*1.5*(known?1:-1);
+ requestAnimationFrame(()=>setProgress(deck,distance));
+ try{tg?.HapticFeedback?.impactOccurred("light")}catch(e){}
+ // The following card, including text, has been rendered for the entire drag.
+ setTimeout(()=>{pos++;flipped=false;busy=false;if(page==="study")study()},340);
 }
-
 function bindSwipe(){
-  const deck = $("#deck");
-  const motion = $("#motion");
-
-  let active = false;
-  let dragging = false;
-  let sx = 0, sy = 0, dx = 0;
-
-  function reset(){
-    motion.style.transition = "transform .25s ease";
-    motion.style.transform = "translateX(0) rotate(0)";
-  }
-
-  deck.addEventListener("pointerdown", e=>{
-    if(busy || active) return;
-    if(e.pointerType === "mouse" && e.button !== 0) return;
-
-    active = true;
-    dragging = false;
-    sx = e.clientX;
-    sy = e.clientY;
-    dx = 0;
-
-    try{ deck.setPointerCapture(e.pointerId); }catch(err){}
-  });
-
-  deck.addEventListener("pointermove", e=>{
-    if(!active || busy) return;
-
-    const x = e.clientX - sx;
-    const y = e.clientY - sy;
-
-    if(Math.abs(x) > 7 || Math.abs(y) > 7){
-      dragging = true;
-    }
-
-    dx = x;
-
-    if(dragging){
-      motion.style.transition = "none";
-      motion.style.transform = `translateX(${dx}px) rotate(${Math.max(-22, Math.min(22, dx/18))}deg)`;
-    }
-  });
-
-  deck.addEventListener("pointerup", e=>{
-    if(!active) return;
-    active = false;
-
-    const threshold = Math.min(95, deck.clientWidth * .23);
-    const dy = Math.abs(e.clientY - sy);
-
-    if(Math.abs(dx) >= threshold && Math.abs(dx) > dy){
-      review(dx > 0);
-    }else{
-      reset();
-      if(!dragging) flip();
-    }
-  });
-
-  deck.addEventListener("pointercancel", ()=>{
-    active = false;
-    reset();
-  });
+ const deck=$("#deck");let active=false,dragging=false,sx=0,sy=0,dx=0,dy=0,pointerId=null;
+ function reset(){deck.classList.add("settling");setProgress(deck,0);setTimeout(()=>deck?.classList.remove("settling"),330)}
+ deck.addEventListener("pointerdown",e=>{
+  if(busy||active||(e.pointerType==="mouse"&&e.button!==0))return;
+  active=true;dragging=false;sx=e.clientX;sy=e.clientY;dx=0;dy=0;pointerId=e.pointerId;
+  deck.classList.remove("settling");
+  try{deck.setPointerCapture(e.pointerId)}catch(err){}
+ });
+ deck.addEventListener("pointermove",e=>{
+  if(!active||busy||e.pointerId!==pointerId)return;
+  dx=e.clientX-sx;dy=e.clientY-sy;
+  if(Math.abs(dx)>8||Math.abs(dy)>8)dragging=true;
+  if(dragging&&Math.abs(dx)>Math.abs(dy)*.8)setProgress(deck,dx);
+ });
+ deck.addEventListener("pointerup",e=>{
+  if(!active||e.pointerId!==pointerId)return;active=false;
+  dx=e.clientX-sx;dy=e.clientY-sy;
+  const threshold=Math.min(95,deck.clientWidth*.23);
+  if(Math.abs(dx)>=threshold&&Math.abs(dx)>Math.abs(dy))review(dx>0);
+  else{reset();if(!dragging)flip()}
+ });
+ deck.addEventListener("pointercancel",()=>{active=false;reset()});
 }
-
 function addScreen(){
-  const w = data.words.find(x=>x.id===editing);
-
-  layout(`
-    <h1>${w ? "Kelimeyi düzenle" : "Kelime ekle"} ✍️</h1>
-    <p>Her anlamı ayrı ayrı ekleyebilirsin.</p>
-
-    <div class="panel">
-      <label>İngilizce kelime</label>
-      <input id="english" placeholder="Örn. run" value="${esc(w?.en || "")}">
-
-      <label>Türkçe anlamlar</label>
-      <div id="rows"></div>
-
-      <button class="secondary" id="plus">＋ Anlam ekle</button>
-      <p id="error" style="color:#ff9baa"></p>
-      <button class="primary" id="save">Kaydet</button>
-    </div>
-  `);
-
-  drawMeanings();
-
-  $("#plus").onclick = ()=>{
-    syncMeanings();
-    meanings.push("");
-    drawMeanings();
-  };
-
-  $("#save").onclick = saveWord;
+ const w=data.words.find(x=>x.id===editing);
+ layout(`<h1>${w?"Kelimeyi düzenle":"Kelime ekle"} ✍️</h1><p>Her anlamı ayrı ayrı ekleyebilirsin.</p><div class="panel"><label>İngilizce kelime</label><input id="english" placeholder="Örn. run" value="${esc(w?.en||"")}"><label>Türkçe anlamlar</label><div id="rows"></div><button class="secondary" id="plus">＋ Anlam ekle</button><p id="error" style="color:#ff9baa"></p><button class="primary" id="save">Kaydet</button></div>`);
+ drawMeanings();$("#plus").onclick=()=>{syncMeanings();meanings.push("");drawMeanings()};$("#save").onclick=saveWord;
 }
-
-function syncMeanings(){
-  meanings = [...document.querySelectorAll(".meaning-input")].map(x=>x.value);
-}
-
+function syncMeanings(){meanings=[...document.querySelectorAll(".meaning-input")].map(x=>x.value)}
 function drawMeanings(){
-  $("#rows").innerHTML = meanings.map((m,i)=>`
-    <div class="meaning">
-      <input class="meaning-input" placeholder="${i+1}. anlam" value="${esc(m)}">
-      <button class="remove" data-remove="${i}">×</button>
-    </div>
-  `).join("");
-
-  document.querySelectorAll("[data-remove]").forEach(b=>{
-    b.onclick = ()=>{
-      syncMeanings();
-      if(meanings.length > 1){
-        meanings.splice(Number(b.dataset.remove),1);
-      }else{
-        meanings = [""];
-      }
-      drawMeanings();
-    };
-  });
+ $("#rows").innerHTML=meanings.map((m,i)=>`<div class="meaning"><input class="meaning-input" placeholder="${i+1}. anlam" value="${esc(m)}"><button class="remove" data-remove="${i}">×</button></div>`).join("");
+ document.querySelectorAll("[data-remove]").forEach(b=>{b.onclick=()=>{syncMeanings();if(meanings.length>1)meanings.splice(Number(b.dataset.remove),1);else meanings=[""];drawMeanings()}});
 }
-
 function saveWord(){
-  syncMeanings();
-
-  const en = $("#english").value.trim();
-  const arr = [...new Set(meanings.map(s=>s.trim()).filter(Boolean))];
-
-  if(!en || !arr.length){
-    $("#error").textContent = "Kelime ve en az bir anlam gerekli.";
-    return;
-  }
-
-  if(editing){
-    const w = data.words.find(x=>x.id===editing);
-    const old = w.meanings;
-
-    w.en = en;
-    w.meanings = arr.map(tr=>({
-      id: old.find(m=>m.tr===tr)?.id || uid(),
-      tr
-    }));
-  }else{
-    data.words.push({
-      id: uid(),
-      en,
-      meanings: arr.map(tr=>({ id:uid(), tr }))
-    });
-  }
-
-  save();
-  editing = null;
-  meanings = [""];
-  resetDeck();
-  page = "study";
-  render();
+ syncMeanings();const en=$("#english").value.trim(),arr=[...new Set(meanings.map(s=>s.trim()).filter(Boolean))];
+ if(!en||!arr.length){$("#error").textContent="Kelime ve en az bir anlam gerekli.";return}
+ if(editing){const w=data.words.find(x=>x.id===editing),old=w.meanings;w.en=en;w.meanings=arr.map(tr=>({id:old.find(m=>m.tr===tr)?.id||uid(),tr}))}
+ else data.words.push({id:uid(),en,meanings:arr.map(tr=>({id:uid(),tr}))});
+ save();editing=null;meanings=[""];resetDeck();page="study";render();
 }
-
-resetDeck();
-render();
-
+function listScreen(){
+ layout(`<h1>Kelimelerim 📖</h1><p>${data.words.length} kelime · ${allCards().length} anlam</p><button class="primary" id="new">＋ Yeni kelime</button><div class="panel">${data.words.length?data.words.map(w=>`<div class="item"><div style="min-width:0"><strong>${esc(w.en)}</strong><p>${w.meanings.map(m=>esc(m.tr)).join(" · ")}</p></div><div style="display:flex;gap:5px;align-items:center"><button data-edit="${esc(w.id)}">✎</button><button data-del="${esc(w.id)}">🗑</button></div></div>`).join(""):"Henüz kelime yok."}</div>`);
+ $("#new").onclick=()=>{editing=null;meanings=[""];page="add";render()};
+ document.querySelectorAll("[data-edit]").forEach(b=>{b.onclick=()=>{editing=b.dataset.edit;meanings=data.words.find(w=>w.id===editing).meanings.map(m=>m.tr);page="add";render()}});
+ document.querySelectorAll("[data-del]").forEach(b=>{b.onclick=()=>{if(!confirm("Kelime silinsin mi?"))return;data.words=data.words.filter(w=>w.id!==b.dataset.del);save();resetDeck();render()}});
+}
+resetDeck();render();
 })();
 </script>
 </body>
