@@ -1,457 +1,108 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101323">
 <title>SwipeLingo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#101323;color:white;
- font-family:-apple-system,Arial,sans-serif
-}
-#app{max-width:520px;margin:auto;padding:20px}
-h1{font-size:27px;margin:12px 0}
-p{color:#aab0c9}
-nav{display:flex;gap:5px;background:#22263d;
- padding:5px;border-radius:15px;margin:20px 0}
-button{font:inherit;cursor:pointer}
-nav button{
- flex:1;padding:13px 3px;border:0;
- border-radius:11px;background:transparent;color:#ccc
-}
-nav .active{background:#484066;color:white}
-.logo{font-size:26px;font-weight:900}
-.logo span{color:#ceaaff}
-.stats{display:flex;gap:8px;margin:20px 0}
-.stat{flex:1;text-align:center;background:#22263e;
- border-radius:14px;padding:13px 5px}
-.stat b{display:block;font-size:24px}
-.stat small{color:#aaa;font-size:11px}
-select,input{
- background:#282d48;color:white;
- border:1px solid #555a75;border-radius:12px;
- padding:13px;font:inherit
-}
-input{width:100%;margin:6px 0}
-select{max-width:100%}
-.toolbar{display:flex;align-items:center;
- justify-content:space-between;gap:10px;margin:20px 0}
-.deck{
- height:min(420px,50dvh);min-height:290px;
- position:relative;perspective:1200px;
- touch-action:none;user-select:none;
- -webkit-user-select:none;overscroll-behavior:contain
-}
-.motion{
- position:absolute;inset:0;
- transform:translateX(0) rotate(0);
- transition:transform .25s,opacity .25s
-}
-.inner{
- position:relative;width:100%;height:100%;
- transform-style:preserve-3d;
- transition:transform .6s cubic-bezier(.2,.8,.2,1)
-}
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#fff;background:#101323}
+body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at top,#292a4c,#101323 70%)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+#app{max-width:520px;margin:auto;min-height:100dvh;padding:16px 18px 32px}
+.logo{font-size:24px;font-weight:900;letter-spacing:-.8px}
+.logo span{color:#d2b7ff}
+.subtitle{font-size:12px;color:#aab0c9;margin-top:2px}
+nav{display:flex;gap:4px;background:#20243b;border-radius:11px;padding:3px;margin:12px 0 16px}
+nav button{flex:1;min-width:0;border:0;background:transparent;color:#bbc0d4;padding:8px 3px;border-radius:8px;font-size:12px;font-weight:750;line-height:18px}
+nav button.active{background:#414365;color:#fff}
+h1{font-size:25px;letter-spacing:-.6px;margin:9px 0 5px}
+p{color:#abb1c9;margin:6px 0;font-size:13px}
+.stats{display:flex;gap:8px;margin:15px 0}
+.stat{flex:1;background:#21253d;border:1px solid #353a57;border-radius:14px;padding:11px 4px;text-align:center}
+.stat b{display:block;font-size:22px}
+.stat small{font-size:11px;color:#aab0c9}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 12px;font-size:13px}
+select,input{background:#282d48;color:white;border:1px solid #4a506e;border-radius:11px;padding:11px}
+select{max-width:62%}input{width:100%;margin:6px 0}
+.deck{position:relative;height:min(420px,49dvh);min-height:270px;perspective:1200px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain}
+.motion{position:absolute;inset:0;will-change:transform;transform:translate3d(0,0,0);transition:transform .24s ease,opacity .24s ease}
+.inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.85,.2,1)}
 .inner.flip{transform:rotateY(180deg)}
-.face{
- position:absolute;inset:0;border-radius:28px;
- background:var(--card);padding:25px;
- display:flex;align-items:center;justify-content:center;
- flex-direction:column;text-align:center;
- backface-visibility:hidden;
- -webkit-backface-visibility:hidden;
- box-shadow:0 18px 50px #0005
-}
+.face{position:absolute;inset:0;border-radius:27px;background:var(--card);padding:56px 22px 48px;display:flex;align-items:center;justify-content:center;text-align:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 20px 50px #0005;overflow:hidden}
+.face:before{content:"";position:absolute;width:190px;height:190px;border-radius:50%;background:#ffffff12;top:-105px;right:-65px;pointer-events:none}
 .back{transform:rotateY(180deg)}
-.word{font-size:clamp(28px,9vw,48px);
- font-weight:850;overflow-wrap:anywhere}
-.lang{font-size:12px;letter-spacing:2px;
- font-weight:bold;margin-bottom:25px}
-.hint{position:absolute;bottom:28px;font-size:13px}
-.legend{display:flex;justify-content:space-between;
- color:#b5bad1;font-size:12px;margin-top:25px}
-.panel{background:#20243b;border-radius:20px;
- padding:20px;margin-top:20px}
-label{display:block;margin:17px 0 5px;
- font-size:14px;font-weight:bold}
-.primary{width:100%;padding:16px;background:#d3b7ff;
- color:#16142a;border:0;border-radius:13px;
- font-weight:800;margin-top:18px}
-.secondary{background:#393d5d;color:white;
- border:0;border-radius:11px;padding:12px}
-.meaning{display:flex;gap:8px;align-items:center}
-.meaning input{flex:1;min-width:0}
-.remove{background:#603444;color:white;border:0;
- border-radius:10px;padding:12px}
-.item{padding:15px 0;border-bottom:1px solid #41455d;
- display:flex;justify-content:space-between;gap:10px}
-.item p{font-size:13px;margin:5px 0}
-.item button{background:#393e5b;color:white;
- border:0;border-radius:9px;padding:10px}
-.empty{text-align:center;padding:35px 10px}
-.note{text-align:center;color:#9da3be;font-size:12px;
- margin-top:20px}
+.lang{position:absolute;top:21px;left:0;right:0;text-align:center;font-size:12px;font-weight:850;letter-spacing:2px;opacity:.95}
+.word{font-size:clamp(29px,9vw,48px);font-weight:850;line-height:1.16;overflow-wrap:anywhere;position:relative}
+.hint{position:absolute;bottom:22px;left:12px;right:12px;font-size:12px;opacity:.9}
+.legend{display:flex;justify-content:space-between;gap:8px;color:#adb3ce;font-size:12px;margin-top:19px}
+.notice{text-align:center;margin-top:15px;font-size:12px;color:#8e95b4}
+.feedback{position:fixed;inset:0;z-index:50;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .12s ease}
+.feedback.show{opacity:1}
+.feedback .symbol{height:110px;width:110px;border-radius:50%;display:grid;place-items:center;font-size:75px;font-weight:900;background:#111b;box-shadow:0 10px 35px #0007}
+.feedback.yes .symbol{color:#50e49f;border:4px solid #50e49f}
+.feedback.no .symbol{color:#ff697a;border:4px solid #ff697a}
+.panel{background:#20243b;border:1px solid #353a57;border-radius:18px;padding:18px;margin-top:18px}
+label{display:block;margin:17px 0 5px;font-size:13px;font-weight:750}
+.primary{width:100%;padding:15px;background:#d3b7ff;color:#151329;border:0;border-radius:12px;font-weight:850;margin-top:17px}
+.secondary{background:#3a3f5d;color:#fff;border:0;border-radius:11px;padding:11px}
+.meaning{display:flex;gap:8px;align-items:center}.meaning input{flex:1;min-width:0}
+.remove{background:#603444;color:#fff;border:0;border-radius:10px;padding:11px}
+.item{padding:14px 0;border-bottom:1px solid #41455d;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.item:last-child{border-bottom:0}.item p{font-size:13px;margin:5px 0;overflow-wrap:anywhere}.item button{background:#393e5b;color:#fff;border:0;border-radius:9px;padding:9px}
+.empty{text-align:center;padding:35px 10px}.note{text-align:center;color:#929ab5;font-size:11px;margin-top:22px}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app"></div><div id="feedback" class="feedback" aria-live="polite"><div class="symbol"></div></div>
 <script>
 (()=>{
 "use strict";
-
 const tg=window.Telegram?.WebApp;
 try{tg?.ready();tg?.expand()}catch(e){}
-
 const KEY="swipelingo.v1";
-const colors=[
-"#b768da","#ed6796","#f38c71","#d5a142",
-"#51b6ad","#418ed0","#7775d8","#ac6ad0",
-"#db5f79","#cc7654","#6fae69","#37a0b8",
-"#6576bf","#b66f9c","#bca345","#54b9a0",
-"#bb6478","#6786da","#986bcc","#da7768",
-"#7ca955","#4aa2ce","#b17a46","#8a8ad5"
-];
-
+const colors=["#b768da","#ed6796","#f38c71","#d5a142","#51b6ad","#418ed0","#7775d8","#ac6ad0","#db5f79","#cc7654","#6fae69","#37a0b8","#6576bf","#b66f9c","#bca345","#54b9a0","#bb6478","#6786da","#986bcc","#da7768","#7ca955","#4aa2ce","#b17a46","#8a8ad5"];
 const $=s=>document.querySelector(s);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",
- '"':"&quot;","'":"&#39;"
-}[c]));
-const uid=()=>crypto.randomUUID?.()||
- Date.now()+"-"+Math.random();
-
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>globalThis.crypto?.randomUUID?.()||Date.now().toString(36)+Math.random().toString(36).slice(2);
 let data;
-try{data=JSON.parse(localStorage.getItem(KEY))}
-catch(e){}
-if(!data||!Array.isArray(data.words))
- data={words:[],reviews:{}};
+try{data=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+if(!data||!Array.isArray(data.words))data={words:[],reviews:{}};
 if(!data.reviews)data.reviews={};
-
-let page="study",mode="mixed",queue=[],pos=0;
-let flipped=false,busy=false,editing=null;
-let meanings=[""];
-
-function save(){
- try{localStorage.setItem(KEY,JSON.stringify(data))}
- catch(e){alert("Kaydetme başarısız.")}
-}
-function allCards(){
- return data.words.flatMap(w=>
-  w.meanings.map(m=>({
-   id:m.id,en:w.en,tr:m.tr
-  }))
- );
-}
-function shuffle(a){
- for(let i=a.length-1;i>0;i--){
-  let j=Math.floor(Math.random()*(i+1));
-  [a[i],a[j]]=[a[j],a[i]];
- }
- return a;
-}
-function resetDeck(){
- queue=shuffle(allCards());
- pos=0;flipped=false;
-}
+let page="study",mode="mixed",queue=[],pos=0,flipped=false,busy=false,editing=null,meanings=[""];
+function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("Veriler kaydedilemedi.")}}
+function allCards(){return data.words.flatMap(w=>(w.meanings||[]).map(m=>({id:m.id,en:w.en,tr:m.tr}))) }
+function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function resetDeck(){queue=shuffle(allCards());pos=0;flipped=false}
 function card(){return queue[pos]}
-function hash(s){
- return [...String(s)].reduce(
-  (a,c)=>a+c.charCodeAt(0),0
- );
-}
-function direction(c){
- if(mode!=="mixed")return mode;
- return hash(c.id)%2?"en-tr":"tr-en";
-}
-function totals(){
- let yes=0,no=0;
- Object.values(data.reviews).forEach(r=>{
-  yes+=r.yes||0;no+=r.no||0;
- });
- return{yes,no};
-}
-function layout(content){
- $("#app").innerHTML=`
- <div class="logo">Swipe<span>Lingo</span> ✦</div>
- <p>Swipe to learn English</p>
- <nav>
-  <button data-page="study" class="${page==="study"?"active":""}">🎴 Çalış</button>
-  <button data-page="add" class="${page==="add"?"active":""}">＋ Ekle</button>
-  <button data-page="list" class="${page==="list"?"active":""}">Kelimelerim</button>
- </nav>
- ${content}
- <div class="note">SwipeLingo · EN ↔ TR</div>`;
- document.querySelectorAll("[data-page]").forEach(b=>{
-  b.onclick=()=>{
-   page=b.dataset.page;
-   editing=null;meanings=[""];
-   render();
-  };
- });
-}
-function render(){
- if(page==="study")study();
- if(page==="add")addScreen();
- if(page==="list")listScreen();
-}
-function study(){
- const t=totals(),c=card();
- layout(`
- <h1>Bugün biraz pratik ✨</h1>
- <p>Dokun, öğren, kaydır.</p>
- <div class="stats">
-  <div class="stat"><b>${allCards().length}</b><small>Toplam anlam</small></div>
-  <div class="stat"><b>${t.yes}</b><small>Biliyorum</small></div>
-  <div class="stat"><b>${t.no}</b><small>Bilmiyorum</small></div>
- </div>
- <div class="toolbar">
-  <span>${c?`${pos+1} / ${queue.length}`:"Hazır"}</span>
-  <select id="mode">
-   <option value="mixed">Karışık</option>
-   <option value="en-tr">EN → TR</option>
-   <option value="tr-en">TR → EN</option>
-  </select>
- </div>
- <div id="slot"></div>
- `);
- $("#mode").value=mode;
- $("#mode").onchange=e=>{
-  mode=e.target.value;flipped=false;study();
- };
- if(!c){
-  $("#slot").innerHTML=`
-   <div class="empty">
-    <h2>${data.words.length?"🎉 Kartlar tamamlandı":"📚 Henüz kelime yok"}</h2>
-    <button class="primary" id="start">
-     ${data.words.length?"Tekrar başlat":"Kelime ekle"}
-    </button>
-   </div>`;
-  $("#start").onclick=()=>{
-   if(data.words.length)resetDeck();
-   else page="add";
-   render();
-  };
-  return;
+function hash(s){return [...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0)}
+function direction(c){return mode!=="mixed"?mode:(hash(c.id)%2?"en-tr":"tr-en")}
+function totals(){let yes=0,no=0;Object.values(data.reviews).forEach(r=>{yes+=r.yes||0;no+=r.no||0});return{yes,no}}
+function layout(content){$("#app").innerHTML=`<div class="logo">Swipe<span>Lingo</span> ✦</div><div class="subtitle">Swipe to learn English</div><nav><button data-page="study" class="${page==="study"?"active":""}">🎴 Çalış</button><button data-page="add" class="${page==="add"?"active":""}">＋ Ekle</button><button data-page="list" class="${page==="list"?"active":""}">Kelimelerim</button></nav>${content}<div class="note">SwipeLingo · EN ↔ TR · Veriler bu cihazda saklanır</div>`;document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>{if(busy)return;page=b.dataset.page;editing=null;meanings=[""];render()})}
+function render(){if(page==="study")study();else if(page==="add")addScreen();else listScreen()}
+function study(){const t=totals(),c=card();layout(`<h1>Bugün biraz pratik ✨</h1><p>Dokun, öğren, kaydır.</p><div class="stats"><div class="stat"><b>${allCards().length}</b><small>Toplam anlam</small></div><div class="stat"><b>${t.yes}</b><small>Biliyorum</small></div><div class="stat"><b>${t.no}</b><small>Bilmiyorum</small></div></div><div class="toolbar"><span>${c?`${pos+1} / ${queue.length}`:"Hazır"}</span><select id="mode"><option value="mixed">Karışık</option><option value="en-tr">EN → TR</option><option value="tr-en">TR → EN</option></select></div><div id="slot"></div>`);$("#mode").value=mode;$("#mode").onchange=e=>{mode=e.target.value;flipped=false;study()};if(!c){$("#slot").innerHTML=`<div class="empty"><h2>${data.words.length?"🎉 Kartlar tamamlandı":"📚 Henüz kelime yok"}</h2><button class="primary" id="start">${data.words.length?"Tekrar başlat":"Kelime ekle"}</button></div>`;$("#start").onclick=()=>{if(data.words.length)resetDeck();else page="add";render()};return}
+const d=direction(c),front=d==="en-tr"?c.en:c.tr,back=d==="en-tr"?c.tr:c.en,color=colors[(hash(c.id)+pos)%24];$("#slot").innerHTML=`<div class="deck" id="deck"><div class="motion" id="motion"><div class="inner" id="inner" style="--card:${color}"><div class="face"><div class="lang">${d==="en-tr"?"İNGİLİZCE":"TÜRKÇE"}</div><div class="word">${esc(front)}</div><div class="hint">✨ Çevirmek için dokun</div></div><div class="face back"><div class="lang">${d==="en-tr"?"TÜRKÇE":"İNGİLİZCE"}</div><div class="word">${esc(back)}</div><div class="hint">← Bilmiyorum · Biliyorum →</div></div></div></div></div><div class="legend"><span>← Bilmiyorum</span><span>Dokun: çevir</span><span>Biliyorum →</span></div>`;bindSwipe()}
+function flip(){if(busy)return;flipped=!flipped;$("#inner")?.classList.toggle("flip",flipped)}
+function showFeedback(known){const f=$("#feedback");f.className="feedback show "+(known?"yes":"no");f.querySelector(".symbol").textContent=known?"✓":"×"}
+function hideFeedback(){const f=$("#feedback");f.className="feedback"}
+function review(known){if(busy||!card())return;busy=true;const c=card(),key=c.id+"|"+direction(c);data.reviews[key]??={yes:0,no:0};data.reviews[key][known?"yes":"no"]++;save();showFeedback(known);const m=$("#motion");m.style.transition="transform .25s ease,opacity .25s ease";m.style.transform=`translate3d(${known?600:-600}px,0,0) rotate(${known?20:-20}deg)`;m.style.opacity="0";try{tg?.HapticFeedback?.impactOccurred("light")}catch(e){}setTimeout(()=>{hideFeedback();pos++;flipped=false;busy=false;study()},650)}
+function bindSwipe(){const deck=$("#deck"),motion=$("#motion");let active=false,drag=false,blocked=false,sx=0,sy=0,dx=0,pointerId=null;
+ function begin(x,y){if(busy)return;active=true;drag=false;blocked=false;sx=x;sy=y;dx=0}
+ function move(x,y){if(!active||busy)return;const vx=x-sx,vy=y-sy;if(!drag&&!blocked&&Math.abs(vy)>14&&Math.abs(vy)>Math.abs(vx)*1.5){blocked=true;return}if(blocked)return;if(Math.abs(vx)>9)drag=true;if(drag){dx=vx;motion.style.transition="none";motion.style.transform=`translate3d(${dx}px,0,0) rotate(${Math.max(-22,Math.min(22,dx/18))}deg)`}}
+ function reset(){motion.style.transition="transform .22s ease";motion.style.transform="translate3d(0,0,0) rotate(0)"}
+ function end(){if(!active)return;active=false;if(blocked){reset();return}if(drag&&Math.abs(dx)>Math.min(95,deck.clientWidth*.23)){review(dx>0)}else{reset();if(!drag)flip()}}
+ // Pointer Events cover both touch and mouse in iOS WebKit. Avoid duplicate synthetic click handling.
+ if(window.PointerEvent){deck.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;pointerId=e.pointerId;begin(e.clientX,e.clientY);try{deck.setPointerCapture(e.pointerId)}catch(err){}});deck.addEventListener("pointermove",e=>{if(e.pointerId===pointerId)move(e.clientX,e.clientY)});deck.addEventListener("pointerup",e=>{if(e.pointerId!==pointerId)return;pointerId=null;end()});deck.addEventListener("pointercancel",()=>{pointerId=null;active=false;reset()});}
+ else{deck.addEventListener("touchstart",e=>{if(e.touches.length===1)begin(e.touches[0].clientX,e.touches[0].clientY)},{passive:true});deck.addEventListener("touchmove",e=>{if(e.touches.length===1){move(e.touches[0].clientX,e.touches[0].clientY);if(drag&&e.cancelable)e.preventDefault()}},{passive:false});deck.addEventListener("touchend",end);deck.addEventListener("touchcancel",()=>{active=false;reset()});deck.addEventListener("mousedown",e=>{if(e.button===0)begin(e.clientX,e.clientY)});deck.addEventListener("mousemove",e=>{if(active)move(e.clientX,e.clientY)});deck.addEventListener("mouseup",end)}
  }
- const d=direction(c);
- const front=d==="en-tr"?c.en:c.tr;
- const back=d==="en-tr"?c.tr:c.en;
- const color=colors[(hash(c.id)+pos)%24];
- $("#slot").innerHTML=`
- <div class="deck" id="deck">
-  <div class="motion" id="motion">
-   <div class="inner" id="inner" style="--card:${color}">
-    <div class="face">
-     <div class="lang">${d==="en-tr"?"İNGİLİZCE":"TÜRKÇE"}</div>
-     <div class="word">${esc(front)}</div>
-     <div class="hint">✨ Çevirmek için dokun</div>
-    </div>
-    <div class="face back">
-     <div class="lang">${d==="en-tr"?"TÜRKÇE":"İNGİLİZCE"}</div>
-     <div class="word">${esc(back)}</div>
-     <div class="hint">← Bilmiyorum · Biliyorum →</div>
-    </div>
-   </div>
-  </div>
- </div>
- <div class="legend">
-  <span>← Bilmiyorum</span>
-  <span>Dokun: çevir</span>
-  <span>Biliyorum →</span>
- </div>`;
- bindSwipe();
-}
-function flip(){
- if(busy)return;
- flipped=!flipped;
- $("#inner").classList.toggle("flip",flipped);
-}
-function review(known){
- if(busy||!card())return;
- busy=true;
- const c=card();
- const key=c.id+"|"+direction(c);
- if(!data.reviews[key])
-  data.reviews[key]={yes:0,no:0};
- data.reviews[key][known?"yes":"no"]++;
- save();
- const m=$("#motion");
- m.style.transition="transform .27s,opacity .27s";
- m.style.transform=`translateX(${known?600:-600}px) rotate(${known?20:-20}deg)`;
- m.style.opacity="0";
- try{tg?.HapticFeedback?.impactOccurred("light")}catch(e){}
- setTimeout(()=>{
-  pos++;flipped=false;busy=false;study();
- },280);
-}
-function bindSwipe(){
- const deck=$("#deck"),motion=$("#motion");
- let active=false,drag=false,locked=false;
- let sx=0,sy=0,dx=0;
- function begin(x,y){
-  if(busy)return;
-  active=true;drag=false;locked=false;
-  sx=x;sy=y;dx=0;
- }
- function move(x,y,e){
-  if(!active||busy)return;
-  const vx=x-sx,vy=y-sy;
-  if(!drag&&!locked&&Math.abs(vy)>12&&
-     Math.abs(vy)>Math.abs(vx)*1.5){
-   locked=true;return;
-  }
-  if(locked)return;
-  if(Math.abs(vx)>7)drag=true;
-  if(drag){
-   if(e.cancelable)e.preventDefault();
-   dx=vx;
-   motion.style.transition="none";
-   motion.style.transform=
-    `translateX(${dx}px) rotate(${dx/18}deg)`;
-  }
- }
- function end(){
-  if(!active)return;
-  active=false;
-  if(locked){reset();return}
-  if(drag&&Math.abs(dx)>Math.min(95,deck.clientWidth*.23)){
-   review(dx>0);
-  }else{
-   reset();
-   if(!drag)flip();
-  }
- }
- function reset(){
-  motion.style.transition="transform .25s";
-  motion.style.transform="translateX(0) rotate(0)";
- }
- deck.addEventListener("touchstart",e=>{
-  if(e.touches.length===1)
-   begin(e.touches[0].clientX,e.touches[0].clientY);
- },{passive:true});
- deck.addEventListener("touchmove",e=>{
-  if(e.touches.length===1)
-   move(e.touches[0].clientX,e.touches[0].clientY,e);
- },{passive:false});
- deck.addEventListener("touchend",end);
- deck.addEventListener("touchcancel",()=>{
-  active=false;reset();
- });
- deck.addEventListener("mousedown",e=>{
-  if(e.button===0)begin(e.clientX,e.clientY);
- });
- deck.addEventListener("mousemove",e=>{
-  if(active)move(e.clientX,e.clientY,e);
- });
- deck.addEventListener("mouseup",end);
- deck.addEventListener("mouseleave",()=>{
-  if(active)end();
- });
-}
-function addScreen(){
- const w=data.words.find(x=>x.id===editing);
- layout(`
- <h1>${w?"Kelimeyi düzenle":"Kelime ekle"} ✍️</h1>
- <p>Her anlamı ayrı ekleyebilirsin.</p>
- <div class="panel">
-  <label>İngilizce kelime</label>
-  <input id="english" placeholder="run" value="${esc(w?.en||"")}">
-  <label>Türkçe anlamlar</label>
-  <div id="rows"></div>
-  <button class="secondary" id="plus">＋ Anlam ekle</button>
-  <p id="error" style="color:#ff9baa"></p>
-  <button class="primary" id="save">Kaydet</button>
- </div>`);
- drawMeanings();
- $("#plus").onclick=()=>{
-  syncMeanings();meanings.push("");drawMeanings();
- };
- $("#save").onclick=saveWord;
-}
-function syncMeanings(){
- meanings=[...document.querySelectorAll(".meaning-input")]
-  .map(x=>x.value);
-}
-function drawMeanings(){
- $("#rows").innerHTML=meanings.map((m,i)=>`
-  <div class="meaning">
-   <input class="meaning-input" placeholder="${i+1}. anlam" value="${esc(m)}">
-   <button class="remove" data-remove="${i}">×</button>
-  </div>`).join("");
- document.querySelectorAll("[data-remove]").forEach(b=>{
-  b.onclick=()=>{
-   syncMeanings();
-   if(meanings.length>1)
-    meanings.splice(Number(b.dataset.remove),1);
-   else meanings=[""];
-   drawMeanings();
-  };
- });
-}
-function saveWord(){
- syncMeanings();
- const en=$("#english").value.trim();
- const arr=[...new Set(meanings.map(s=>s.trim()).filter(Boolean))];
- if(!en||!arr.length){
-  $("#error").textContent="Kelime ve en az bir anlam gerekli.";
-  return;
- }
- if(editing){
-  const w=data.words.find(x=>x.id===editing);
-  const old=w.meanings;
-  w.en=en;
-  w.meanings=arr.map(tr=>({
-   id:old.find(m=>m.tr===tr)?.id||uid(),tr
-  }));
- }else{
-  data.words.push({
-   id:uid(),en,
-   meanings:arr.map(tr=>({id:uid(),tr}))
-  });
- }
- save();editing=null;meanings=[""];
- resetDeck();page="list";render();
-}
-function listScreen(){
- layout(`
- <h1>Kelimelerim 📖</h1>
- <p>${data.words.length} kelime · ${allCards().length} anlam</p>
- <button class="primary" id="new">＋ Yeni kelime</button>
- <div class="panel">
- ${data.words.length?data.words.map(w=>`
-  <div class="item">
-   <div>
-    <strong>${esc(w.en)}</strong>
-    <p>${w.meanings.map(m=>esc(m.tr)).join(" · ")}</p>
-   </div>
-   <div style="display:flex;gap:5px">
-    <button data-edit="${esc(w.id)}">✎</button>
-    <button data-del="${esc(w.id)}">🗑</button>
-   </div>
-  </div>`).join(""):"Henüz kelime yok."}
- </div>`);
- $("#new").onclick=()=>{
-  editing=null;meanings=[""];page="add";render();
- };
- document.querySelectorAll("[data-edit]").forEach(b=>{
-  b.onclick=()=>{
-   editing=b.dataset.edit;
-   meanings=data.words.find(w=>w.id===editing)
-    .meanings.map(m=>m.tr);
-   page="add";render();
-  };
- });
- document.querySelectorAll("[data-del]").forEach(b=>{
-  b.onclick=()=>{
-   if(!confirm("Kelime silinsin mi?"))return;
-   data.words=data.words.filter(w=>w.id!==b.dataset.del);
-   save();resetDeck();render();
-  };
- });
-}
+function addScreen(){const w=data.words.find(x=>x.id===editing);layout(`<h1>${w?"Kelimeyi düzenle":"Kelime ekle"} ✍️</h1><p>Her anlamı ayrı ekleyebilirsin.</p><div class="panel"><label>İngilizce kelime</label><input id="english" placeholder="run" maxlength="120" value="${esc(w?.en||"")}"><label>Türkçe anlamlar</label><div id="rows"></div><button class="secondary" id="plus">＋ Anlam ekle</button><p id="error" style="color:#ff9baa"></p><button class="primary" id="save">Kaydet</button></div>`);drawMeanings();$("#plus").onclick=()=>{syncMeanings();meanings.push("");drawMeanings()};$("#save").onclick=saveWord}
+function syncMeanings(){meanings=[...document.querySelectorAll(".meaning-input")].map(x=>x.value)}
+function drawMeanings(){$("#rows").innerHTML=meanings.map((m,i)=>`<div class="meaning"><input class="meaning-input" maxlength="200" placeholder="${i+1}. anlam" value="${esc(m)}"><button class="remove" data-remove="${i}">×</button></div>`).join("");document.querySelectorAll("[data-remove]").forEach(b=>b.onclick=()=>{syncMeanings();if(meanings.length>1)meanings.splice(Number(b.dataset.remove),1);else meanings=[""];drawMeanings()})}
+function saveWord(){syncMeanings();const en=$("#english").value.trim(),arr=[...new Set(meanings.map(s=>s.trim()).filter(Boolean))];if(!en||!arr.length){$("#error").textContent="Kelime ve en az bir anlam gerekli.";return}if(editing){const w=data.words.find(x=>x.id===editing),old=w.meanings;w.en=en;w.meanings=arr.map(tr=>({id:old.find(m=>m.tr===tr)?.id||uid(),tr}))}else{data.words.push({id:uid(),en,meanings:arr.map(tr=>({id:uid(),tr}))})}save();editing=null;meanings=[""];resetDeck();page="list";render()}
+function listScreen(){layout(`<h1>Kelimelerim 📖</h1><p>${data.words.length} kelime · ${allCards().length} anlam</p><button class="primary" id="new">＋ Yeni kelime</button><div class="panel">${data.words.length?data.words.map(w=>`<div class="item"><div style="min-width:0"><strong>${esc(w.en)}</strong><p>${w.meanings.map(m=>esc(m.tr)).join(" · ")}</p></div><div style="display:flex;gap:5px"><button data-edit="${esc(w.id)}">✎</button><button data-del="${esc(w.id)}">🗑</button></div></div>`).join(""):"Henüz kelime yok."}</div>`);$("#new").onclick=()=>{editing=null;meanings=[""];page="add";render()};document.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>{editing=b.dataset.edit;meanings=data.words.find(w=>w.id===editing).meanings.map(m=>m.tr);page="add";render()});document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{if(!confirm("Kelime silinsin mi?"))return;data.words=data.words.filter(w=>w.id!==b.dataset.del);save();resetDeck();render()})}
 resetDeck();render();
 })();
 </script>
