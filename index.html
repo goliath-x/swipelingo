@@ -1,216 +1,1210 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101323">
+<meta name="theme-color" content="#10121B">
 <title>SwipeLingo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
+:root{
+  color-scheme:dark;
+  --bg:#10121B;
+  --surface:#1D202D;
+  --surface2:#282C3C;
+  --text:#F8F8FC;
+  --secondary:#ABB0C2;
+  --purple:#C6A2F5;
+  --line:rgba(255,255,255,.09);
+  --font:-apple-system,BlinkMacSystemFont,
+    "SF Pro Display","SF Pro Text",
+    "Segoe UI",sans-serif;
+}
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;background:#101323;color:white;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+html,body{
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  -webkit-font-smoothing:antialiased;
+}
 body{overflow-x:hidden}
-button,input,select,textarea{font-family:inherit;letter-spacing:inherit}button{cursor:pointer}
-#app{max-width:520px;margin:0 auto;padding:10px 16px 14px;min-height:100dvh}
-.brand-header{display:flex;align-items:center;justify-content:center;gap:8px;min-height:30px;white-space:nowrap}
-.logo{font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1.2}
-.logo span{color:#ceaaff}
-
-nav{display:flex;gap:8px;background:transparent;padding:0;border-radius:11px;margin:10px 0}
-nav button{flex:1;min-width:0;padding:9px 3px;border:0;border-radius:10px;background:#ffffff;color:#b768da;font-size:20px;font-weight:900;letter-spacing:-.6px;line-height:22px}
-nav button.active{background:#b768da;color:#ffffff}
-h1{font-size:24px;margin:8px 0}p,.muted{color:#aab0c9}
-.stats{display:flex;gap:8px;margin:10px 0}
-.stat{flex:1;text-align:center;background:#22263e;border-radius:12px;padding:9px 4px}
-.stat b{display:block;font-size:21px;font-weight:900}.stat small{color:#aaa;font-size:10px;font-weight:700}
-.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}
-.toolbar span{font-size:12px;color:#b4bad0;font-weight:700}
-input{background:#282d48;color:white;border:1px solid #555a75;border-radius:11px;padding:11px;outline:none}
-input{width:100%;margin:6px 0}/* Minimal, borderless language mode selector */
-.mode-switch{display:flex;align-items:center;gap:17px}
-.mode-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:2px;min-width:38px;height:40px;padding:0 2px;border:0;background:transparent;color:#a9a3c0;font-size:21px;line-height:1;opacity:.57;filter:saturate(.75);transition:opacity .18s ease,transform .18s ease,filter .18s ease;-webkit-tap-highlight-color:transparent}
-.mode-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.mode-btn.active{opacity:1;color:#ceaaff;filter:none}
-.mode-btn.active::after{content:"";position:absolute;width:14px;height:2px;border-radius:2px;background:#ceaaff;bottom:1px;left:50%;transform:translateX(-50%)}
-.mode-btn.pulse{animation:modePulse .25s ease-out}
-@keyframes modePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
-@media(max-width:360px){.mode-switch{gap:9px}.mode-btn{min-width:34px;font-size:19px}}
-
-/* Crisp vector flags independent of operating-system emoji rendering */
-.flag-pair{display:flex;align-items:center;gap:4px}
-.flag-icon{display:block;width:23px;height:16px;flex:none;border-radius:2px;overflow:hidden}
-.flag-arrow{font-size:11px;color:#aab0c9;font-weight:700}
-
-/* Live deck: next cards already contain their real text */
-.deck{height:clamp(185px,calc(100dvh - 256px),420px);position:relative;perspective:1200px;touch-action:none;user-select:none;-webkit-user-select:none;isolation:isolate;--progress:0}
-.deck-card{position:absolute;left:8%;top:6%;width:84%;height:87%;border-radius:25px;transform-origin:center;will-change:transform;transform-style:preserve-3d}
-/* Four pre-rendered cards: the 4th starts invisible and joins while dragging.
-   All layers move continuously with --progress; releasing restores their poses. */
-.deck-card.depth-3{z-index:0;pointer-events:none;transform:translate(-24px,17px) rotate(-17deg) scale(.88);opacity:0;transform:translate(calc(-24px + var(--progress)*11px),calc(17px - var(--progress)*8px)) rotate(calc(-17deg + var(--progress)*7deg)) scale(calc(.88 + var(--progress)*.06));opacity:calc(var(--progress)*.82)}
-.deck-card.depth-2{z-index:1;pointer-events:none;transform:translate(calc(-13px + var(--progress)*28px),calc(9px - var(--progress)*6px)) rotate(calc(-10deg + var(--progress)*18deg)) scale(calc(.94 + var(--progress)*.025));opacity:calc(.82 + var(--progress)*.10)}
-.deck-card.depth-1{z-index:2;pointer-events:none;transform:translate(calc(15px - var(--progress)*15px),calc(3px - var(--progress)*3px)) rotate(calc(8deg + (var(--angle) - 8deg)*var(--progress))) scale(calc(.965 + var(--progress)*.035));opacity:calc(.92 + var(--progress)*.08)}
-.deck-card.motion{z-index:3;transform:translateX(var(--drag-x,0px)) rotate(calc(var(--base-angle, -2deg) + var(--drag-rot,0deg)));opacity:var(--front-opacity,1)}
-.deck-card .inner{--card:var(--color)}
-.deck.settling .deck-card{transition:transform .32s cubic-bezier(.2,.8,.25,1),opacity .32s ease}
-.deck-card .face{box-shadow:0 14px 40px #0005}
-.inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.8,.2,1)}
-.inner.flip{transform:rotateY(180deg)}
-.face{position:absolute;inset:0;border-radius:25px;background:var(--card);padding:24px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 14px 40px #0005;overflow:hidden}
-.back{transform:rotateY(180deg)}
-.word{font-size:clamp(28px,8vw,48px);font-weight:900;overflow-wrap:anywhere;line-height:1.18}
-.lang{position:absolute;top:22px;left:0;right:0;font-size:12px;letter-spacing:1.3px;font-weight:900}
-.hint{position:absolute;bottom:22px;left:8px;right:8px;font-size:12px;font-weight:700;letter-spacing:-.15px;opacity:.9}
-.legend{display:flex;justify-content:space-between;gap:5px;color:#b5bad1;font-size:11px;font-weight:700;letter-spacing:-.1px;margin-top:12px}
-.note{text-align:center;color:#818aa7;font-size:10px;margin-top:12px}
-.panel{background:#20243b;border-radius:18px;padding:16px;margin-top:15px}
-label{display:block;margin:15px 0 5px;font-size:13px;font-weight:bold}
-.primary{width:100%;padding:14px;background:#d3b7ff;color:#16142a;border:0;border-radius:12px;font-weight:900;margin-top:15px}
-.secondary{background:#393d5d;color:white;border:0;border-radius:11px;padding:11px}
-.meaning{display:flex;gap:8px;align-items:center}.meaning input{flex:1;min-width:0}
-.remove{background:#603444;color:white;border:0;border-radius:10px;padding:12px}
-.item{padding:14px 0;border-bottom:1px solid #41455d;display:flex;justify-content:space-between;gap:10px}
-.item p{font-size:13px;margin:5px 0;overflow-wrap:anywhere}
-.item button{background:#393e5b;color:white;border:0;border-radius:9px;padding:9px}
-.empty{text-align:center;padding:35px 10px}
-@media(min-width:600px){#app{padding-top:8px;padding-bottom:6px}nav{margin:7px 0}.stats{margin:7px 0}.toolbar{margin:7px 0}.deck{height:clamp(160px,calc(100dvh - 212px),420px)}.legend{margin-top:8px}.note{margin-top:7px}}
-@media(max-height:520px){#app{padding-top:6px}nav{margin:6px 0}.stats{margin:6px 0}.stat{padding:5px}.toolbar{margin:6px 0}.deck{height:max(145px,calc(100dvh - 205px))}.legend,.note{margin-top:6px}}
-@media(max-width:360px){.brand-header{gap:5px}.logo{font-size:21px}}
+button,input{font:inherit}
+button{
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+button:focus-visible,input:focus-visible{
+  outline:2px solid var(--purple);
+  outline-offset:3px;
+}
+button:active{opacity:.8}
+#app{
+  width:min(100%,520px);
+  min-height:100dvh;
+  margin:auto;
+  padding:
+    max(12px,env(safe-area-inset-top))
+    20px
+    max(12px,env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+}
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  flex-shrink:0;
+}
+.logo{
+  font-size:27px;
+  font-weight:850;
+  letter-spacing:-1.25px;
+  line-height:1.1;
+}
+.logo span{color:var(--purple)}
+.logo-mark{
+  color:var(--purple);
+  font-size:16px;
+  vertical-align:top;
+  margin-left:3px;
+}
+.navigation{
+  display:flex;
+  gap:4px;
+  margin-top:14px;
+  padding:4px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  border-radius:17px;
+  flex-shrink:0;
+}
+.navigation button{
+  flex:1;
+  min-height:44px;
+  border:0;
+  border-radius:13px;
+  background:transparent;
+  color:var(--secondary);
+  font-size:15px;
+  font-weight:750;
+  letter-spacing:-.3px;
+  transition:background .2s,color .2s,transform .2s;
+}
+.navigation button.selected{
+  background:#E6D4FF;
+  color:#261C36;
+}
+.navigation button:active{transform:scale(.97)}
+.content{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:16px;
+}
+.metric{
+  text-align:center;
+  min-width:0;
+}
+.metric strong{
+  display:block;
+  font-size:22px;
+  font-weight:780;
+  letter-spacing:-.7px;
+  font-variant-numeric:tabular-nums;
+}
+.metric span{
+  display:block;
+  margin-top:2px;
+  font-size:12px;
+  color:var(--secondary);
+}
+.metric:nth-child(2) strong{color:#8BE0B4}
+.metric:nth-child(3) strong{color:#F2A3AD}
+.controls{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:16px;
+  min-height:48px;
+}
+.progress{
+  font-size:13px;
+  color:var(--secondary);
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
+}
+.modes{
+  display:flex;
+  align-items:center;
+  gap:2px;
+}
+.mode{
+  height:46px;
+  min-width:48px;
+  padding:0 6px;
+  background:transparent;
+  color:var(--secondary);
+  border:0;
+  border-radius:13px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:2px;
+  position:relative;
+  transition:background .2s,transform .2s;
+}
+.mode.active{
+  background:rgba(198,162,245,.13);
+  color:var(--purple);
+}
+.mode.active:after{
+  content:"";
+  position:absolute;
+  bottom:3px;
+  width:15px;
+  height:3px;
+  border-radius:5px;
+  background:var(--purple);
+}
+.mode.pulse{animation:pulse .28s ease}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.09)}
+}
+.flag{
+  display:block;
+  width:25px;
+  height:17px;
+  border-radius:3px;
+  overflow:hidden;
+  box-shadow:0 0 0 .5px #ffffff35;
+  flex-shrink:0;
+}
+.flag svg{display:block;width:100%;height:100%}
+.mode-arrow{font-size:12px;opacity:.8}
+.shuffle-svg{width:22px;height:22px}
+.study-area{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
+.deck{
+  position:relative;
+  width:100%;
+  height:clamp(215px,calc(100dvh - 290px),430px);
+  max-height:100%;
+  margin:14px auto 0;
+  perspective:1200px;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+  flex-shrink:1;
+}
+.deck-card{
+  position:absolute;
+  inset:18px 20px 18px;
+  border-radius:25px;
+  transform:
+    translateY(var(--y,0px))
+    scale(var(--s,1))
+    rotate(var(--r,0deg))
+    translateX(var(--x,0px));
+  opacity:var(--o,1);
+  transform-origin:center center;
+  will-change:transform,opacity;
+  pointer-events:none;
+}
+.deck-card.frontmost{pointer-events:auto}
+.deck-card.animated{
+  transition:
+    transform .32s cubic-bezier(.22,.8,.25,1),
+    opacity .32s ease;
+}
+.card-inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .54s cubic-bezier(.22,.8,.25,1);
+}
+.card-inner.flipped{transform:rotateY(180deg)}
+.card-face{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:26px;
+  border-radius:25px;
+  background:var(--card-color);
+  color:#FFFFFF;
+  text-align:center;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+  overflow:hidden;
+  box-shadow:0 12px 30px rgba(0,0,0,.20);
+}
+.card-face::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    160deg,
+    rgba(255,255,255,.11),
+    transparent 46%,
+    rgba(0,0,0,.09)
+  );
+  pointer-events:none;
+}
+.card-face.back{transform:rotateY(180deg)}
+.card-language{
+  position:absolute;
+  top:23px;
+  left:15px;
+  right:15px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+}
+.card-word{
+  font-size:clamp(27px,7.5vw,45px);
+  font-weight:780;
+  letter-spacing:-1px;
+  line-height:1.15;
+  overflow-wrap:anywhere;
+  max-height:65%;
+  overflow:hidden;
+}
+.card-hint{
+  position:absolute;
+  bottom:23px;
+  left:10px;
+  right:10px;
+  font-size:13px;
+  font-weight:600;
+  opacity:.92;
+}
+.instructions{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
+  margin:15px 0 4px;
+  color:var(--secondary);
+  font-size:12px;
+  font-weight:650;
+  flex-shrink:0;
+}
+.instructions span:nth-child(1){color:#F2A3AD}
+.instructions span:nth-child(3){
+  color:#8BE0B4;
+  text-align:right;
+}
+.instructions span:nth-child(2){text-align:center}
+.footer{
+  text-align:center;
+  margin-top:auto;
+  padding-top:14px;
+  color:#777E93;
+  font-size:11px;
+  flex-shrink:0;
+}
+.empty{
+  margin:auto 0;
+  padding:32px 14px;
+  text-align:center;
+}
+.empty-icon{font-size:42px}
+.empty h2{
+  font-size:21px;
+  letter-spacing:-.5px;
+}
+.empty p{
+  color:var(--secondary);
+  font-size:14px;
+  line-height:1.5;
+}
+.primary{
+  min-height:48px;
+  padding:12px 22px;
+  border:0;
+  border-radius:14px;
+  background:var(--purple);
+  color:#211A30;
+  font-size:15px;
+  font-weight:800;
+}
+.secondary-button{
+  min-height:44px;
+  border:1px solid var(--line);
+  background:var(--surface2);
+  color:var(--text);
+  border-radius:13px;
+  padding:10px 14px;
+  font-size:14px;
+  font-weight:650;
+}
+.add-page{
+  padding-top:20px;
+  padding-bottom:14px;
+}
+.page-title{
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:-.8px;
+  margin:0 0 6px;
+}
+.page-subtitle{
+  color:var(--secondary);
+  font-size:14px;
+  line-height:1.5;
+  margin:0 0 19px;
+}
+.form-panel{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+}
+.form-label{
+  display:block;
+  font-size:13px;
+  color:#D8D9E5;
+  font-weight:750;
+  margin:10px 0 8px;
+}
+.text-field{
+  width:100%;
+  min-height:48px;
+  background:var(--surface2);
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:13px;
+  color:var(--text);
+  padding:12px 14px;
+  outline:0;
+  font-size:16px;
+}
+.text-field:focus{border-color:var(--purple)}
+.text-field::placeholder{color:#888D9E}
+.meaning-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:9px;
+}
+.meaning-row input{min-width:0;flex:1}
+.remove{
+  min-width:44px;
+  min-height:48px;
+  border:0;
+  border-radius:12px;
+  background:#453038;
+  color:#FFB2BD;
+  font-size:24px;
+}
+.form-actions{
+  display:flex;
+  gap:8px;
+  margin-top:20px;
+}
+.form-actions>*{flex:1}
+.error{
+  color:#FFADB8;
+  font-size:13px;
+  min-height:16px;
+  margin-top:9px;
+}
+.saved-section{
+  margin-top:24px;
+}
+.saved-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:15px;
+  font-weight:750;
+  margin-bottom:10px;
+}
+.saved-count{color:var(--secondary);font-size:12px}
+.saved-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  border-bottom:1px solid var(--line);
+  padding:12px 0;
+}
+.saved-item strong{font-size:15px}
+.saved-item p{
+  color:var(--secondary);
+  font-size:12px;
+  line-height:1.5;
+  margin:4px 0 0;
+  overflow-wrap:anywhere;
+}
+.saved-actions{display:flex;gap:4px}
+.icon-button{
+  min-width:44px;
+  min-height:44px;
+  border:0;
+  background:transparent;
+  color:var(--secondary);
+  font-size:20px;
+  border-radius:12px;
+}
+@media(min-width:600px){
+  #app{max-width:480px}
+  .deck{
+    height:clamp(210px,calc(100dvh - 270px),410px);
+  }
+}
+@media(max-height:610px){
+  #app{padding-top:6px;padding-bottom:6px}
+  .navigation{margin-top:7px}
+  .summary{margin-top:7px}
+  .controls{margin-top:6px}
+  .deck{
+    margin-top:5px;
+    height:clamp(145px,calc(100dvh - 235px),310px);
+  }
+  .instructions{margin-top:6px}
+  .footer{padding-top:5px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
 </style>
 </head>
 <body>
 <div id="app"></div>
-
 <script>
 (()=>{
 "use strict";
-const tg=window.Telegram?.WebApp;
-try{tg?.ready();tg?.expand()}catch(e){}
-const KEY="swipelingo.v1";
-const colors=["#b768da","#ed6796","#f38c71","#d5a142","#51b6ad","#418ed0","#7775d8","#ac6ad0","#db5f79","#cc7654","#6fae69","#37a0b8","#6576bf","#b66f9c","#bca345","#54b9a0","#bb6478","#6786da","#986bcc","#da7768","#7ca955","#4aa2ce","#b17a46","#8a8ad5"];
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const uid=()=>crypto.randomUUID?.()||Date.now()+"-"+Math.random();
-let data;
-try{data=JSON.parse(localStorage.getItem(KEY))}catch(e){}
-if(!data||!Array.isArray(data.words))data={words:[],reviews:{}};
-if(!data.reviews)data.reviews={};
-let page="study",mode="mixed",queue=[],pos=0,flipped=false,busy=false,editing=null,meanings=[""];
 
-function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){alert("Veriler kaydedilemedi.")}}
-function allCards(){return data.words.flatMap(w=>w.meanings.map(m=>({id:m.id,en:w.en,tr:m.tr})))}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
-function resetDeck(){queue=shuffle(allCards());pos=0;flipped=false}
-function card(){return queue[pos]}
-function hash(s){return [...String(s)].reduce((a,c)=>a+c.charCodeAt(0),0)}
-function cardColor(c){return colors[hash(c.id)%colors.length]}
-function cardAngle(c){return [-3,2.5,-1.5,4,-4.2,1.8][hash(c.id)%6]}
-function direction(c){return mode!=="mixed"?mode:(hash(c.id)%2?"en-tr":"tr-en")}
-function totals(){let yes=0,no=0;Object.values(data.reviews).forEach(r=>{yes+=r.yes||0;no+=r.no||0});return {yes,no}}
+const tg=window.Telegram?.WebApp;
+try{
+  tg?.ready();
+  tg?.expand();
+}catch(e){}
+
+const KEY="swipelingo.v1";
+const prefersReducedMotion=
+  window.matchMedia("(prefers-reduced-motion: reduce)");
+
+const colors=[
+  "#A66BD2","#DA648D","#E68468","#CA9A49",
+  "#48A9A1","#488BC7","#7372CE","#B070C4",
+  "#CC607B","#B97553","#67A56F","#399EB1",
+  "#6979BD","#B26A97","#B6A04A","#54AF99",
+  "#C16980","#6987C9","#916DC1","#D27B6D",
+  "#83A251","#50A1BF","#AD7A4F","#8684CA"
+];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(
+  /[&<>"']/g,
+  c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c])
+);
+
+const uid=()=>{
+  if(crypto?.randomUUID)return crypto.randomUUID();
+  return Date.now()+"-"+Math.random();
+};
+
+let data;
+try{
+  data=JSON.parse(localStorage.getItem(KEY));
+}catch(e){}
+
+if(!data||!Array.isArray(data.words)){
+  data={words:[],reviews:{}};
+}
+if(!data.reviews)data.reviews={};
+
+let page="study";
+let mode="mixed";
+let queue=[];
+let pos=0;
+let busy=false;
+let flipped=false;
+let editing=null;
+let meanings=[""];
+let sessionDirections={};
+let previousMode="mixed";
+
+function save(){
+  try{
+    localStorage.setItem(KEY,JSON.stringify(data));
+  }catch(e){
+    alert("Kaydetme başarısız. Depolama alanını kontrol et.");
+  }
+}
+
+function allCards(){
+  return data.words.flatMap(w=>
+    (w.meanings||[]).map(m=>({
+      id:m.id,
+      wordId:w.id,
+      en:w.en,
+      tr:m.tr
+    }))
+  );
+}
+
+function shuffle(a){
+  const result=[...a];
+  for(let i=result.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [result[i],result[j]]=[result[j],result[i]];
+  }
+  return result;
+}
+
+function resetDeck(){
+  queue=shuffle(allCards());
+  pos=0;
+  flipped=false;
+  busy=false;
+  sessionDirections={};
+}
+
+function current(){return queue[pos]}
+
+function hash(str){
+  return [...String(str)].reduce(
+    (sum,c)=>sum+c.charCodeAt(0),0
+  );
+}
+
+function direction(c){
+  if(mode!=="mixed")return mode;
+  if(!sessionDirections[c.id]){
+    sessionDirections[c.id]=
+      Math.random()<.5?"en-tr":"tr-en";
+  }
+  return sessionDirections[c.id];
+}
+
+function stats(){
+  let yes=0,no=0;
+  Object.values(data.reviews).forEach(r=>{
+    yes+=r.yes||0;
+    no+=r.no||0;
+  });
+  return{yes,no,total:allCards().length};
+}
+
+function texts(dir){
+  if(dir==="tr-en"){
+    return{
+      front:"Türkçe",
+      back:"İngilizce",
+      left:"Bilmiyorum",
+      right:"Biliyorum",
+      tap:"Dokun: Çevir",
+      flip:"Çevirmek için dokun"
+    };
+  }
+  return{
+    front:"English",
+    back:"Turkish",
+    left:"Don't know",
+    right:"I know",
+    tap:"Tap to flip",
+    flip:"Tap to flip"
+  };
+}
+
+const ukFlag=`
+<svg viewBox="0 0 60 40" aria-hidden="true">
+ <rect width="60" height="40" fill="#fff"/>
+ <path d="M25 0H35V40H25Z M0 15H60V25H0Z"
+ fill="#CE1124"/>
+</svg>`;
+
+const trFlag=`
+<svg viewBox="0 0 60 40" aria-hidden="true">
+ <rect width="60" height="40" fill="#E30A17"/>
+ <circle cx="24" cy="20" r="12" fill="#fff"/>
+ <circle cx="28" cy="20" r="9.5" fill="#E30A17"/>
+ <path d="M39 12L41.3 17.5L47 18
+ L42.6 21.7L44 27L39 24L34 27
+ L35.4 21.7L31 18L36.7 17.5Z" fill="#fff"/>
+</svg>`;
+
+const shuffleIcon=`
+<svg class="shuffle-svg" viewBox="0 0 24 24"
+ fill="none" stroke="currentColor" stroke-width="2"
+ stroke-linecap="round" stroke-linejoin="round"
+ aria-hidden="true">
+ <path d="m18 14 4 4-4 4"/>
+ <path d="m18 2 4 4-4 4"/>
+ <path d="M2 18h2.5c2.5 0 4-1 6-4l3-4c2-3 3.5-4 6-4H22"/>
+ <path d="M2 6h2.5c2.5 0 4 1 6 4"/>
+ <path d="M14 14c2 3 3.5 4 6 4h2"/>
+</svg>`;
+
+function modeIcon(m){
+  if(m==="mixed")return shuffleIcon;
+  const first=m==="en-tr"?ukFlag:trFlag;
+  const second=m==="en-tr"?trFlag:ukFlag;
+  return `
+    <span class="flag">${first}</span>
+    <span class="mode-arrow">›</span>
+    <span class="flag">${second}</span>
+  `;
+}
+
 function layout(content){
-$("#app").innerHTML=`
-<header class="brand-header"><div class="logo">Swipe<span>Lingo</span> ✦</div></header>
-<nav><button data-page="study" class="${page==="study"?"active":""}">Work</button><button data-page="add" class="${page==="add"?"active":""}">Add</button></nav>
-${content}<div class="note">SwipeLingo @copyright 2026</div>`;
-document.querySelectorAll("[data-page]").forEach(b=>{b.onclick=()=>{if(busy)return;page=b.dataset.page;editing=null;meanings=[""];render()}})
+  $("#app").innerHTML=`
+  <header class="header">
+    <div class="logo">
+      Swipe<span>Lingo</span><span class="logo-mark">✦</span>
+    </div>
+  </header>
+  <nav class="navigation" aria-label="Ana menü">
+    <button type="button" data-page="study"
+      class="${page==="study"?"selected":""}"
+      aria-current="${page==="study"?"page":"false"}">
+      Work
+    </button>
+    <button type="button" data-page="add"
+      class="${page==="add"?"selected":""}"
+      aria-current="${page==="add"?"page":"false"}">
+      Add
+    </button>
+  </nav>
+  <main class="content">${content}</main>
+  <footer class="footer">SwipeLingo © 2026</footer>
+  `;
+
+  document.querySelectorAll("[data-page]").forEach(b=>{
+    b.onclick=()=>{
+      if(busy)return;
+      page=b.dataset.page;
+      editing=null;
+      meanings=[""];
+      render();
+    };
+  });
 }
-function render(){if(page==="study")study();else if(page==="add")addScreen();else if(page==="list")listScreen()}
-function cardMarkup(c,depth){
- if(!c)return "";
- const d=direction(c),front=d==="en-tr"?c.en:c.tr,back=d==="en-tr"?c.tr:c.en;
- const englishUI=d==="en-tr";
- const clazz=depth===0?"motion":"depth-"+depth;
- const style=`--color:${cardColor(c)};--base-angle:${cardAngle(c)}deg;--angle:${cardAngle(c)}deg`;
- return `<div class="deck-card ${clazz}" style="${style}"><div class="inner"><div class="face"><div class="lang">${englishUI?"English":"Türkçe"}</div><div class="word">${esc(front)}</div><div class="hint">${englishUI?"✨ Tap to flip":"✨ Dokun: Çevir"}</div></div><div class="face back"><div class="lang">${englishUI?"Turkish":"İngilizce"}</div><div class="word">${esc(back)}</div><div class="hint">${englishUI?"← Don't know · I know →":"← Bilmiyorum · Biliyorum →"}</div></div></div></div>`;
+
+function render(){
+  if(page==="study")renderStudy();
+  else renderAdd();
 }
-function study(){
- const t=totals(),c=card();
- const englishUI=c&&direction(c)==="en-tr";
- layout(`<div class="stats"><div class="stat"><b>${allCards().length}</b><small>${englishUI?"Cards":"Toplam anlam"}</small></div><div class="stat"><b style="color:#7ee4b2">${t.yes}</b><small>${englishUI?"I know":"Biliyorum"}</small></div><div class="stat"><b style="color:#ff8c9e">${t.no}</b><small>${englishUI?"Don't know":"Bilmiyorum"}</small></div></div><div class="toolbar"><span>${c?`${pos+1} / ${queue.length}`:(mode==="en-tr"?"Ready":"Hazır")}</span><div class="mode-switch"><button type="button" class="mode-btn ${mode==="mixed"?"active":""}" data-mode="mixed" aria-label="Karışık" title="Karışık"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h2.5a6 6 0 0 0 5-2.7l5-7.6A6 6 0 0 1 19.5 5H22"/><path d="M2 6h2.5a6 6 0 0 1 5 2.7"/><path d="M14.5 15.3a6 6 0 0 0 5 2.7H22"/></svg></button><button type="button" class="mode-btn ${mode==="en-tr"?"active":""}" data-mode="en-tr" aria-label="İngilizceden Türkçeye" title="EN → TR"><span class="flag-pair"><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="İngiltere bayrağı"><rect width="60" height="40" fill="#fff"/><path d="M25 0h10v40H25zM0 15h60v10H0z" fill="#CE1124"/></svg><span class="flag-arrow">→</span><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="Türkiye bayrağı"><rect width="60" height="40" fill="#E30A17"/><circle cx="25" cy="20" r="12" fill="white"/><circle cx="29" cy="20" r="9.5" fill="#E30A17"/><path d="M39 13.7 L40.8 18 L45.5 18.3 L41.9 21.4 L43 25.9 L39 23.4 L35 25.9 L36.1 21.4 L32.5 18.3 L37.2 18 Z" fill="white"/></svg></span></button><button type="button" class="mode-btn ${mode==="tr-en"?"active":""}" data-mode="tr-en" aria-label="Türkçeden İngilizceye" title="TR → EN"><span class="flag-pair"><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="Türkiye bayrağı"><rect width="60" height="40" fill="#E30A17"/><circle cx="25" cy="20" r="12" fill="white"/><circle cx="29" cy="20" r="9.5" fill="#E30A17"/><path d="M39 13.7 L40.8 18 L45.5 18.3 L41.9 21.4 L43 25.9 L39 23.4 L35 25.9 L36.1 21.4 L32.5 18.3 L37.2 18 Z" fill="white"/></svg><span class="flag-arrow">→</span><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="İngiltere bayrağı"><rect width="60" height="40" fill="#fff"/><path d="M25 0h10v40H25zM0 15h60v10H0z" fill="#CE1124"/></svg></span></button></div></div><div id="slot"></div>`);
- document.querySelectorAll("[data-mode]").forEach(b=>{b.onclick=()=>{
-  if(busy)return;mode=b.dataset.mode;flipped=false;
-  document.querySelectorAll("[data-mode]").forEach(el=>el.classList.toggle("active",el===b));
-  b.classList.remove("pulse");void b.offsetWidth;b.classList.add("pulse");
-  setTimeout(()=>{if(!busy&&page==="study")study()},275);
- }});
- if(!c){
-  $("#slot").innerHTML=`<div class="empty"><h2>${data.words.length?"🎉 Kartlar tamamlandı":"📚 Henüz kelime yok"}</h2><button class="primary" id="start">${data.words.length?"Tekrar başlat":"Kelime ekle"}</button></div>`;
-  $("#start").onclick=()=>{if(data.words.length)resetDeck();else page="add";render()};return;
- }
- $("#slot").innerHTML=`<div class="deck" id="deck">${cardMarkup(queue[pos+3],3)}${cardMarkup(queue[pos+2],2)}${cardMarkup(queue[pos+1],1)}${cardMarkup(c,0)}</div><div class="legend"><span>${englishUI?"← Don't know":"← Bilmiyorum"}</span><span>${englishUI?"Tap to flip":"Dokun: Çevir"}</span><span>${englishUI?"I know →":"Biliyorum →"}</span></div>`;
- bindSwipe();
+
+function cardColor(c){
+  return colors[hash(c.id)%colors.length];
 }
-function flip(){if(busy)return;flipped=!flipped;$("#deck .motion .inner")?.classList.toggle("flip",flipped)}
-function setProgress(deck,dx){
- const limit=Math.max(110,deck.clientWidth*.42);
- const p=Math.min(1,Math.abs(dx)/limit);
- deck.style.setProperty("--progress",p.toFixed(4));
- deck.style.setProperty("--drag-x",dx+"px");
- deck.style.setProperty("--drag-rot",Math.max(-25,Math.min(25,dx/15))+"deg");
- deck.style.setProperty("--front-opacity",(1-.18*p).toFixed(3));
+
+function cardMarkup(c,index){
+  const dir=direction(c);
+  const labels=texts(dir);
+  const front=dir==="en-tr"?c.en:c.tr;
+  const back=dir==="en-tr"?c.tr:c.en;
+  const color=cardColor(c);
+
+  return `
+   <div class="deck-card ${index===0?"frontmost":""}"
+     data-depth="${index}"
+     style="--card-color:${color}">
+    <div class="card-inner">
+      <div class="card-face">
+        <div class="card-language">${labels.front}</div>
+        <div class="card-word">${esc(front)}</div>
+        <div class="card-hint">${labels.flip}</div>
+      </div>
+      <div class="card-face back">
+        <div class="card-language">${labels.back}</div>
+        <div class="card-word">${esc(back)}</div>
+        <div class="card-hint">${labels.tap}</div>
+      </div>
+    </div>
+   </div>
+  `;
 }
+
+const poses=[
+  {x:0,y:0,s:1,r:-2,o:1},
+  {x:0,y:13,s:.94,r:4,o:1},
+  {x:0,y:23,s:.87,r:-5,o:1},
+  {x:0,y:31,s:.79,r:3,o:0}
+];
+
+function lerp(a,b,p){return a+(b-a)*p}
+
+function paintStack(progress=0,animate=false,exitX=0){
+  const nodes=[...document.querySelectorAll(".deck-card")];
+  nodes.forEach((el,i)=>{
+    const a=poses[Math.min(i,3)];
+    const b=poses[Math.min(i+1,3)];
+    const p=Math.min(1,Math.max(0,progress));
+
+    let x=lerp(a.x,b.x,p);
+    let y=lerp(a.y,b.y,p);
+    let s=lerp(a.s,b.s,p);
+    let r=lerp(a.r,b.r,p);
+    let o=lerp(a.o,b.o,p);
+
+    if(i===0){
+      x=exitX;
+      r=-2+exitX/18;
+      s=1;
+      y=0;
+      o=1-Math.min(1,Math.abs(exitX)/420);
+    }else{
+      const target=poses[i-1];
+      x=0;
+      y=lerp(a.y,target.y,p);
+      s=lerp(a.s,target.s,p);
+      r=lerp(a.r,target.r,p);
+      o=lerp(a.o,target.o,p);
+    }
+
+    el.classList.toggle("animated",animate);
+    el.style.setProperty("--x",x+"px");
+    el.style.setProperty("--y",y+"px");
+    el.style.setProperty("--s",s);
+    el.style.setProperty("--r",r+"deg");
+    el.style.setProperty("--o",o);
+    el.style.zIndex=20-i;
+  });
+}
+
+function renderStudy(){
+  const c=current();
+  const s=stats();
+  const dir=c?direction(c):mode==="tr-en"?"tr-en":"en-tr";
+  const labels=texts(dir);
+
+  layout(`
+  <div class="summary">
+    <div class="metric">
+      <strong>${s.total}</strong><span>Cards</span>
+    </div>
+    <div class="metric">
+      <strong>${s.yes}</strong><span>Known</span>
+    </div>
+    <div class="metric">
+      <strong>${s.no}</strong><span>Unknown</span>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="progress">
+      ${c?`${pos+1} / ${queue.length}`:"0 / 0"}
+    </div>
+    <div class="modes" role="group" aria-label="Çalışma yönü">
+      ${["mixed","en-tr","tr-en"].map(m=>`
+      <button type="button"
+        class="mode ${mode===m?"active":""}"
+        data-mode="${m}"
+        aria-label="${m==="mixed"?"Karışık":m==="en-tr"?"English to Turkish":"Turkish to English"}"
+        aria-pressed="${mode===m}">
+        ${modeIcon(m)}
+      </button>
+      `).join("")}
+    </div>
+  </div>
+  <section class="study-area">
+  ${c?`
+    <div class="deck" id="deck" aria-label="Kelime kartları">
+      ${queue.slice(pos,pos+4).map(cardMarkup).reverse().join("")}
+    </div>
+    <div class="instructions">
+      <span>← ${labels.left}</span>
+      <span>${labels.tap}</span>
+      <span>${labels.right} →</span>
+    </div>
+  `:`
+    <div class="empty">
+      <div class="empty-icon">${data.words.length?"✦":"✎"}</div>
+      <h2>${data.words.length?"Session complete":"Your first word awaits"}</h2>
+      <p>${data.words.length
+        ?"You've reviewed all the cards in this session."
+        :"Add a word and its meanings to begin."}</p>
+      <button type="button" class="primary" id="start">
+        ${data.words.length?"Study again":"Add a word"}
+      </button>
+    </div>
+  `}
+  </section>
+  `);
+
+  document.querySelectorAll("[data-mode]").forEach(btn=>{
+    btn.onclick=()=>{
+      if(busy)return;
+      const newMode=btn.dataset.mode;
+      if(mode===newMode){
+        btn.classList.remove("pulse");
+        void btn.offsetWidth;
+        btn.classList.add("pulse");
+        return;
+      }
+      previousMode=mode;
+      mode=newMode;
+      flipped=false;
+      sessionDirections={};
+      renderStudy();
+      const active=document.querySelector(".mode.active");
+      active?.classList.add("pulse");
+    };
+  });
+
+  if(!c){
+    $("#start").onclick=()=>{
+      if(data.words.length)resetDeck();
+      else page="add";
+      render();
+    };
+    return;
+  }
+
+  paintStack(0,false,0);
+  bindGestures();
+}
+
+function flipCard(){
+  if(busy)return;
+  flipped=!flipped;
+  document.querySelector(
+    ".deck-card.frontmost .card-inner"
+  )?.classList.toggle("flipped",flipped);
+  try{
+    tg?.HapticFeedback?.selectionChanged();
+  }catch(e){}
+}
+
 function review(known){
- if(busy||!card())return;
- busy=true;
- const c=card(),key=c.id+"|"+direction(c);
- if(!data.reviews[key])data.reviews[key]={yes:0,no:0};
- data.reviews[key][known?"yes":"no"]++;
- save();
- const deck=$("#deck");
- deck.classList.add("settling");
- const distance=deck.clientWidth*1.5*(known?1:-1);
- requestAnimationFrame(()=>setProgress(deck,distance));
- try{tg?.HapticFeedback?.impactOccurred("light")}catch(e){}
- // The following card, including text, has been rendered for the entire drag.
- setTimeout(()=>{pos++;flipped=false;busy=false;if(page==="study")study()},340);
+  if(busy||!current())return;
+  busy=true;
+
+  const c=current();
+  const key=c.id+"|"+direction(c);
+  data.reviews[key]??={yes:0,no:0};
+  data.reviews[key][known?"yes":"no"]++;
+  save();
+
+  try{
+    tg?.HapticFeedback?.impactOccurred("light");
+  }catch(e){}
+
+  const deck=$("#deck");
+  const distance=Math.max(window.innerWidth,700);
+  const duration=prefersReducedMotion.matches?10:320;
+
+  paintStack(1,true,known?distance:-distance);
+
+  window.setTimeout(()=>{
+    pos++;
+    flipped=false;
+    busy=false;
+    renderStudy();
+  },duration);
 }
-function bindSwipe(){
- const deck=$("#deck");let active=false,dragging=false,sx=0,sy=0,dx=0,dy=0,pointerId=null;
- function reset(){deck.classList.add("settling");setProgress(deck,0);setTimeout(()=>deck?.classList.remove("settling"),330)}
- deck.addEventListener("pointerdown",e=>{
-  if(busy||active||(e.pointerType==="mouse"&&e.button!==0))return;
-  active=true;dragging=false;sx=e.clientX;sy=e.clientY;dx=0;dy=0;pointerId=e.pointerId;
-  deck.classList.remove("settling");
-  try{deck.setPointerCapture(e.pointerId)}catch(err){}
- });
- deck.addEventListener("pointermove",e=>{
-  if(!active||busy||e.pointerId!==pointerId)return;
-  dx=e.clientX-sx;dy=e.clientY-sy;
-  if(Math.abs(dx)>8||Math.abs(dy)>8)dragging=true;
-  if(dragging&&Math.abs(dx)>Math.abs(dy)*.8)setProgress(deck,dx);
- });
- deck.addEventListener("pointerup",e=>{
-  if(!active||e.pointerId!==pointerId)return;active=false;
-  dx=e.clientX-sx;dy=e.clientY-sy;
-  const threshold=Math.min(95,deck.clientWidth*.23);
-  if(Math.abs(dx)>=threshold&&Math.abs(dx)>Math.abs(dy))review(dx>0);
-  else{reset();if(!dragging)flip()}
- });
- deck.addEventListener("pointercancel",()=>{active=false;reset()});
+
+function bindGestures(){
+  const deck=$("#deck");
+  let active=false;
+  let pointerId=null;
+  let startX=0,startY=0;
+  let deltaX=0,deltaY=0;
+  let moved=false;
+
+  deck.addEventListener("pointerdown",e=>{
+    if(busy||active)return;
+    if(e.pointerType==="mouse"&&e.button!==0)return;
+
+    active=true;
+    pointerId=e.pointerId;
+    startX=e.clientX;
+    startY=e.clientY;
+    deltaX=0;
+    deltaY=0;
+    moved=false;
+
+    try{deck.setPointerCapture(e.pointerId)}catch(err){}
+  });
+
+  deck.addEventListener("pointermove",e=>{
+    if(!active||busy||e.pointerId!==pointerId)return;
+
+    deltaX=e.clientX-startX;
+    deltaY=e.clientY-startY;
+
+    if(Math.hypot(deltaX,deltaY)>8)moved=true;
+
+    if(moved){
+      const progress=Math.min(
+        1,Math.abs(deltaX)/140
+      );
+      paintStack(progress,false,deltaX);
+    }
+  });
+
+  deck.addEventListener("pointerup",e=>{
+    if(!active||e.pointerId!==pointerId)return;
+    active=false;
+
+    const threshold=Math.min(
+      95,deck.clientWidth*.23
+    );
+
+    if(
+      Math.abs(deltaX)>=threshold &&
+      Math.abs(deltaX)>Math.abs(deltaY)
+    ){
+      review(deltaX>0);
+    }else{
+      paintStack(0,true,0);
+      if(!moved)flipCard();
+    }
+  });
+
+  deck.addEventListener("pointercancel",()=>{
+    active=false;
+    paintStack(0,true,0);
+  });
+
+  deck.tabIndex=0;
+  deck.addEventListener("keydown",e=>{
+    if(busy)return;
+    if(e.key==="ArrowRight"){
+      e.preventDefault();review(true);
+    }else if(e.key==="ArrowLeft"){
+      e.preventDefault();review(false);
+    }else if(e.key==="Enter"||e.key===" "){
+      e.preventDefault();flipCard();
+    }
+  });
 }
-function addScreen(){
- const w=data.words.find(x=>x.id===editing);
- layout(`<h1>${w?"Kelimeyi düzenle":"Kelime ekle"} ✍️</h1><p>Her anlamı ayrı ayrı ekleyebilirsin.</p><div class="panel"><label>İngilizce kelime</label><input id="english" placeholder="Örn. run" value="${esc(w?.en||"")}"><label>Türkçe anlamlar</label><div id="rows"></div><button class="secondary" id="plus">＋ Anlam ekle</button><p id="error" style="color:#ff9baa"></p><button class="primary" id="save">Kaydet</button></div>`);
- drawMeanings();$("#plus").onclick=()=>{syncMeanings();meanings.push("");drawMeanings()};$("#save").onclick=saveWord;
+
+function renderAdd(){
+  const w=data.words.find(x=>x.id===editing);
+
+  layout(`
+  <div class="add-page">
+    <h1 class="page-title">
+      ${w?"Edit word":"Add a word"}
+    </h1>
+    <p class="page-subtitle">
+      Add each meaning separately. Every meaning becomes its own flashcard.
+    </p>
+
+    <div class="form-panel">
+      <label class="form-label" for="english">
+        English word
+      </label>
+      <input class="text-field" id="english"
+        maxlength="120"
+        placeholder="e.g. run"
+        value="${esc(w?.en||"")}">
+
+      <label class="form-label">
+        Turkish meanings
+      </label>
+      <div id="meaning-rows"></div>
+
+      <button type="button" class="secondary-button" id="add-meaning">
+        + Add meaning
+      </button>
+
+      <div class="error" id="error" role="alert"></div>
+
+      <div class="form-actions">
+        <button type="button" class="primary" id="save-word">
+          ${w?"Save changes":"Save word"}
+        </button>
+      </div>
+    </div>
+
+    <div class="saved-section">
+      <div class="saved-heading">
+        <span>Saved words</span>
+        <span class="saved-count">${data.words.length}</span>
+      </div>
+      <div id="saved-list"></div>
+    </div>
+  </div>
+  `);
+
+  renderMeaningRows();
+  renderSavedWords();
+
+  $("#add-meaning").onclick=()=>{
+    syncMeanings();
+    meanings.push("");
+    renderMeaningRows();
+    document.querySelector(
+      ".meaning-row:last-child input"
+    )?.focus();
+  };
+
+  $("#save-word").onclick=saveWord;
 }
-function syncMeanings(){meanings=[...document.querySelectorAll(".meaning-input")].map(x=>x.value)}
-function drawMeanings(){
- $("#rows").innerHTML=meanings.map((m,i)=>`<div class="meaning"><input class="meaning-input" placeholder="${i+1}. anlam" value="${esc(m)}"><button class="remove" data-remove="${i}">×</button></div>`).join("");
- document.querySelectorAll("[data-remove]").forEach(b=>{b.onclick=()=>{syncMeanings();if(meanings.length>1)meanings.splice(Number(b.dataset.remove),1);else meanings=[""];drawMeanings()}});
+
+function syncMeanings(){
+  meanings=[...document.querySelectorAll(
+    ".meaning-input"
+  )].map(i=>i.value);
 }
+
+function renderMeaningRows(){
+  $("#meaning-rows").innerHTML=meanings.map((m,i)=>`
+    <div class="meaning-row">
+      <input class="text-field meaning-input"
+        maxlength="200"
+        aria-label="Anlam ${i+1}"
+        placeholder="Meaning ${i+1}"
+        value="${esc(m)}">
+      <button type="button" class="remove"
+        data-remove="${i}"
+        aria-label="Anlamı sil">×</button>
+    </div>
+  `).join("");
+
+  document.querySelectorAll("[data-remove]").forEach(b=>{
+    b.onclick=()=>{
+      syncMeanings();
+      if(meanings.length>1){
+        meanings.splice(Number(b.dataset.remove),1);
+      }else{
+        meanings=[""];
+      }
+      renderMeaningRows();
+    };
+  });
+}
+
+function renderSavedWords(){
+  $("#saved-list").innerHTML=data.words.length
+  ?data.words.map(w=>`
+    <div class="saved-item">
+      <div style="min-width:0">
+        <strong>${esc(w.en)}</strong>
+        <p>${(w.meanings||[]).map(m=>esc(m.tr)).join(" · ")}</p>
+      </div>
+      <div class="saved-actions">
+        <button type="button" class="icon-button"
+          data-edit="${esc(w.id)}"
+          aria-label="Kelimeyi düzenle">✎</button>
+        <button type="button" class="icon-button"
+          data-delete="${esc(w.id)}"
+          aria-label="Kelimeyi sil">×</button>
+      </div>
+    </div>
+  `).join("")
+  :`<p class="page-subtitle">No saved words yet.</p>`;
+
+  document.querySelectorAll("[data-edit]").forEach(b=>{
+    b.onclick=()=>{
+      editing=b.dataset.edit;
+      const w=data.words.find(x=>x.id===editing);
+      meanings=w.meanings.map(m=>m.tr);
+      renderAdd();
+    };
+  });
+
+  document.querySelectorAll("[data-delete]").forEach(b=>{
+    b.onclick=()=>{
+      if(!confirm("Delete this word?"))return;
+
+      const w=data.words.find(x=>x.id===b.dataset.delete);
+      if(w){
+        w.meanings.forEach(m=>{
+          Object.keys(data.reviews).forEach(key=>{
+            if(key.startsWith(m.id+"|")){
+              delete data.reviews[key];
+            }
+          });
+        });
+      }
+
+      data.words=data.words.filter(
+        x=>x.id!==b.dataset.delete
+      );
+
+      save();
+      resetDeck();
+      editing=null;
+      meanings=[""];
+      renderAdd();
+    };
+  });
+}
+
 function saveWord(){
- syncMeanings();const en=$("#english").value.trim(),arr=[...new Set(meanings.map(s=>s.trim()).filter(Boolean))];
- if(!en||!arr.length){$("#error").textContent="Kelime ve en az bir anlam gerekli.";return}
- if(editing){const w=data.words.find(x=>x.id===editing),old=w.meanings;w.en=en;w.meanings=arr.map(tr=>({id:old.find(m=>m.tr===tr)?.id||uid(),tr}))}
- else data.words.push({id:uid(),en,meanings:arr.map(tr=>({id:uid(),tr}))});
- save();editing=null;meanings=[""];resetDeck();page="study";render();
+  syncMeanings();
+
+  const en=$("#english").value.trim();
+  const values=[...new Set(
+    meanings.map(m=>m.trim()).filter(Boolean)
+  )];
+
+  if(!en||!values.length){
+    $("#error").textContent=
+      "Enter a word and at least one meaning.";
+    return;
+  }
+
+  if(editing){
+    const w=data.words.find(x=>x.id===editing);
+    const old=w.meanings;
+
+    w.en=en;
+    w.meanings=values.map(tr=>({
+      id:old.find(m=>
+        m.tr.toLocaleLowerCase("tr")===
+        tr.toLocaleLowerCase("tr")
+      )?.id||uid(),
+      tr
+    }));
+  }else{
+    data.words.push({
+      id:uid(),
+      en,
+      meanings:values.map(tr=>({
+        id:uid(),tr
+      }))
+    });
+  }
+
+  save();
+  editing=null;
+  meanings=[""];
+  resetDeck();
+  page="study";
+  render();
 }
-function listScreen(){
- layout(`<h1>Kelimelerim 📖</h1><p>${data.words.length} kelime · ${allCards().length} anlam</p><button class="primary" id="new">＋ Yeni kelime</button><div class="panel">${data.words.length?data.words.map(w=>`<div class="item"><div style="min-width:0"><strong>${esc(w.en)}</strong><p>${w.meanings.map(m=>esc(m.tr)).join(" · ")}</p></div><div style="display:flex;gap:5px;align-items:center"><button data-edit="${esc(w.id)}">✎</button><button data-del="${esc(w.id)}">🗑</button></div></div>`).join(""):"Henüz kelime yok."}</div>`);
- $("#new").onclick=()=>{editing=null;meanings=[""];page="add";render()};
- document.querySelectorAll("[data-edit]").forEach(b=>{b.onclick=()=>{editing=b.dataset.edit;meanings=data.words.find(w=>w.id===editing).meanings.map(m=>m.tr);page="add";render()}});
- document.querySelectorAll("[data-del]").forEach(b=>{b.onclick=()=>{if(!confirm("Kelime silinsin mi?"))return;data.words=data.words.filter(w=>w.id!==b.dataset.del);save();resetDeck();render()}});
-}
-resetDeck();render();
+
+resetDeck();
+render();
+
 })();
 </script>
 </body>
