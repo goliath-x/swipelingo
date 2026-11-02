@@ -10,7 +10,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;background:#101323;color:white;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
 body{overflow-x:hidden}
-button,input,select{font:inherit}button{cursor:pointer}
+button,input,select,textarea{font-family:inherit;letter-spacing:inherit}button{cursor:pointer}
 #app{max-width:520px;margin:0 auto;padding:10px 16px 14px;min-height:100dvh}
 .brand-header{display:flex;align-items:center;justify-content:center;gap:8px;min-height:30px;white-space:nowrap}
 .logo{font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1.2}
@@ -22,9 +22,9 @@ nav button.active{background:#b768da;color:#ffffff}
 h1{font-size:24px;margin:8px 0}p,.muted{color:#aab0c9}
 .stats{display:flex;gap:8px;margin:10px 0}
 .stat{flex:1;text-align:center;background:#22263e;border-radius:12px;padding:9px 4px}
-.stat b{display:block;font-size:21px}.stat small{color:#aaa;font-size:10px}
+.stat b{display:block;font-size:21px;font-weight:900}.stat small{color:#aaa;font-size:10px;font-weight:700}
 .toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:10px 0}
-.toolbar span{font-size:12px;color:#b4bad0}
+.toolbar span{font-size:12px;color:#b4bad0;font-weight:700}
 input{background:#282d48;color:white;border:1px solid #555a75;border-radius:11px;padding:11px;outline:none}
 input{width:100%;margin:6px 0}/* Minimal, borderless language mode selector */
 .mode-switch{display:flex;align-items:center;gap:17px}
@@ -44,9 +44,12 @@ input{width:100%;margin:6px 0}/* Minimal, borderless language mode selector */
 /* Live deck: next cards already contain their real text */
 .deck{height:clamp(185px,calc(100dvh - 256px),420px);position:relative;perspective:1200px;touch-action:none;user-select:none;-webkit-user-select:none;isolation:isolate;--progress:0}
 .deck-card{position:absolute;left:8%;top:6%;width:84%;height:87%;border-radius:25px;transform-origin:center;will-change:transform;transform-style:preserve-3d}
-.deck-card.depth-2{z-index:0;pointer-events:none;transform:translate(calc(-13px + var(--progress)*3px),calc(9px - var(--progress)*6px)) rotate(calc(-10deg + var(--progress)*18deg)) scale(calc(.94 + var(--progress)*.045));opacity:calc(.82 + var(--progress)*.13)}
-.deck-card.depth-1{z-index:1;pointer-events:none;transform:translate(calc(15px - var(--progress)*15px),calc(3px - var(--progress)*3px)) rotate(calc(8deg + (var(--angle) - 8deg)*var(--progress))) scale(calc(.965 + var(--progress)*.035));opacity:calc(.92 + var(--progress)*.08)}
-.deck-card.motion{z-index:2;transform:translateX(var(--drag-x,0px)) rotate(calc(var(--base-angle, -2deg) + var(--drag-rot,0deg)));opacity:var(--front-opacity,1)}
+/* Four pre-rendered cards: the 4th starts invisible and joins while dragging.
+   All layers move continuously with --progress; releasing restores their poses. */
+.deck-card.depth-3{z-index:0;pointer-events:none;transform:translate(-24px,17px) rotate(-17deg) scale(.88);opacity:0;transform:translate(calc(-24px + var(--progress)*11px),calc(17px - var(--progress)*8px)) rotate(calc(-17deg + var(--progress)*7deg)) scale(calc(.88 + var(--progress)*.06));opacity:calc(var(--progress)*.82)}
+.deck-card.depth-2{z-index:1;pointer-events:none;transform:translate(calc(-13px + var(--progress)*28px),calc(9px - var(--progress)*6px)) rotate(calc(-10deg + var(--progress)*18deg)) scale(calc(.94 + var(--progress)*.025));opacity:calc(.82 + var(--progress)*.10)}
+.deck-card.depth-1{z-index:2;pointer-events:none;transform:translate(calc(15px - var(--progress)*15px),calc(3px - var(--progress)*3px)) rotate(calc(8deg + (var(--angle) - 8deg)*var(--progress))) scale(calc(.965 + var(--progress)*.035));opacity:calc(.92 + var(--progress)*.08)}
+.deck-card.motion{z-index:3;transform:translateX(var(--drag-x,0px)) rotate(calc(var(--base-angle, -2deg) + var(--drag-rot,0deg)));opacity:var(--front-opacity,1)}
 .deck-card .inner{--card:var(--color)}
 .deck.settling .deck-card{transition:transform .32s cubic-bezier(.2,.8,.25,1),opacity .32s ease}
 .deck-card .face{box-shadow:0 14px 40px #0005}
@@ -54,14 +57,14 @@ input{width:100%;margin:6px 0}/* Minimal, borderless language mode selector */
 .inner.flip{transform:rotateY(180deg)}
 .face{position:absolute;inset:0;border-radius:25px;background:var(--card);padding:24px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 14px 40px #0005;overflow:hidden}
 .back{transform:rotateY(180deg)}
-.word{font-size:clamp(28px,8vw,48px);font-weight:850;overflow-wrap:anywhere;line-height:1.18}
-.lang{position:absolute;top:22px;left:0;right:0;font-size:12px;letter-spacing:2px;font-weight:800}
-.hint{position:absolute;bottom:22px;left:8px;right:8px;font-size:12px;opacity:.9}
-.legend{display:flex;justify-content:space-between;gap:5px;color:#b5bad1;font-size:11px;margin-top:12px}
+.word{font-size:clamp(28px,8vw,48px);font-weight:900;overflow-wrap:anywhere;line-height:1.18}
+.lang{position:absolute;top:22px;left:0;right:0;font-size:12px;letter-spacing:1.3px;font-weight:900}
+.hint{position:absolute;bottom:22px;left:8px;right:8px;font-size:12px;font-weight:700;letter-spacing:-.15px;opacity:.9}
+.legend{display:flex;justify-content:space-between;gap:5px;color:#b5bad1;font-size:11px;font-weight:700;letter-spacing:-.1px;margin-top:12px}
 .note{text-align:center;color:#818aa7;font-size:10px;margin-top:12px}
 .panel{background:#20243b;border-radius:18px;padding:16px;margin-top:15px}
 label{display:block;margin:15px 0 5px;font-size:13px;font-weight:bold}
-.primary{width:100%;padding:14px;background:#d3b7ff;color:#16142a;border:0;border-radius:12px;font-weight:800;margin-top:15px}
+.primary{width:100%;padding:14px;background:#d3b7ff;color:#16142a;border:0;border-radius:12px;font-weight:900;margin-top:15px}
 .secondary{background:#393d5d;color:white;border:0;border-radius:11px;padding:11px}
 .meaning{display:flex;gap:8px;align-items:center}.meaning input{flex:1;min-width:0}
 .remove{background:#603444;color:white;border:0;border-radius:10px;padding:12px}
@@ -114,13 +117,15 @@ function render(){if(page==="study")study();else if(page==="add")addScreen();els
 function cardMarkup(c,depth){
  if(!c)return "";
  const d=direction(c),front=d==="en-tr"?c.en:c.tr,back=d==="en-tr"?c.tr:c.en;
+ const englishUI=d==="en-tr";
  const clazz=depth===0?"motion":"depth-"+depth;
  const style=`--color:${cardColor(c)};--base-angle:${cardAngle(c)}deg;--angle:${cardAngle(c)}deg`;
- return `<div class="deck-card ${clazz}" style="${style}"><div class="inner"><div class="face"><div class="lang">${d==="en-tr"?"English":"Turkish"}</div><div class="word">${esc(front)}</div><div class="hint">✨ Çevirmek için dokun</div></div><div class="face back"><div class="lang">${d==="en-tr"?"Turkish":"English"}</div><div class="word">${esc(back)}</div><div class="hint">← Bilmiyorum · Biliyorum →</div></div></div></div>`;
+ return `<div class="deck-card ${clazz}" style="${style}"><div class="inner"><div class="face"><div class="lang">${englishUI?"English":"Türkçe"}</div><div class="word">${esc(front)}</div><div class="hint">${englishUI?"✨ Tap to flip":"✨ Dokun: Çevir"}</div></div><div class="face back"><div class="lang">${englishUI?"Turkish":"İngilizce"}</div><div class="word">${esc(back)}</div><div class="hint">${englishUI?"← Don't know · I know →":"← Bilmiyorum · Biliyorum →"}</div></div></div></div>`;
 }
 function study(){
  const t=totals(),c=card();
- layout(`<div class="stats"><div class="stat"><b>${allCards().length}</b><small>Toplam anlam</small></div><div class="stat"><b style="color:#7ee4b2">${t.yes}</b><small>Biliyorum</small></div><div class="stat"><b style="color:#ff8c9e">${t.no}</b><small>Bilmiyorum</small></div></div><div class="toolbar"><span>${c?`${pos+1} / ${queue.length}`:"Hazır"}</span><div class="mode-switch"><button type="button" class="mode-btn ${mode==="mixed"?"active":""}" data-mode="mixed" aria-label="Karışık" title="Karışık"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h2.5a6 6 0 0 0 5-2.7l5-7.6A6 6 0 0 1 19.5 5H22"/><path d="M2 6h2.5a6 6 0 0 1 5 2.7"/><path d="M14.5 15.3a6 6 0 0 0 5 2.7H22"/></svg></button><button type="button" class="mode-btn ${mode==="en-tr"?"active":""}" data-mode="en-tr" aria-label="İngilizceden Türkçeye" title="EN → TR"><span class="flag-pair"><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="İngiltere bayrağı"><rect width="60" height="40" fill="#fff"/><path d="M25 0h10v40H25zM0 15h60v10H0z" fill="#CE1124"/></svg><span class="flag-arrow">→</span><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="Türkiye bayrağı"><rect width="60" height="40" fill="#E30A17"/><circle cx="25" cy="20" r="12" fill="white"/><circle cx="29" cy="20" r="9.5" fill="#E30A17"/><path d="M39 13.7 L40.8 18 L45.5 18.3 L41.9 21.4 L43 25.9 L39 23.4 L35 25.9 L36.1 21.4 L32.5 18.3 L37.2 18 Z" fill="white"/></svg></span></button><button type="button" class="mode-btn ${mode==="tr-en"?"active":""}" data-mode="tr-en" aria-label="Türkçeden İngilizceye" title="TR → EN"><span class="flag-pair"><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="Türkiye bayrağı"><rect width="60" height="40" fill="#E30A17"/><circle cx="25" cy="20" r="12" fill="white"/><circle cx="29" cy="20" r="9.5" fill="#E30A17"/><path d="M39 13.7 L40.8 18 L45.5 18.3 L41.9 21.4 L43 25.9 L39 23.4 L35 25.9 L36.1 21.4 L32.5 18.3 L37.2 18 Z" fill="white"/></svg><span class="flag-arrow">→</span><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="İngiltere bayrağı"><rect width="60" height="40" fill="#fff"/><path d="M25 0h10v40H25zM0 15h60v10H0z" fill="#CE1124"/></svg></span></button></div></div><div id="slot"></div>`);
+ const englishUI=c&&direction(c)==="en-tr";
+ layout(`<div class="stats"><div class="stat"><b>${allCards().length}</b><small>${englishUI?"Cards":"Toplam anlam"}</small></div><div class="stat"><b style="color:#7ee4b2">${t.yes}</b><small>${englishUI?"I know":"Biliyorum"}</small></div><div class="stat"><b style="color:#ff8c9e">${t.no}</b><small>${englishUI?"Don't know":"Bilmiyorum"}</small></div></div><div class="toolbar"><span>${c?`${pos+1} / ${queue.length}`:(mode==="en-tr"?"Ready":"Hazır")}</span><div class="mode-switch"><button type="button" class="mode-btn ${mode==="mixed"?"active":""}" data-mode="mixed" aria-label="Karışık" title="Karışık"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m18 14 4 4-4 4"/><path d="m18 2 4 4-4 4"/><path d="M2 18h2.5a6 6 0 0 0 5-2.7l5-7.6A6 6 0 0 1 19.5 5H22"/><path d="M2 6h2.5a6 6 0 0 1 5 2.7"/><path d="M14.5 15.3a6 6 0 0 0 5 2.7H22"/></svg></button><button type="button" class="mode-btn ${mode==="en-tr"?"active":""}" data-mode="en-tr" aria-label="İngilizceden Türkçeye" title="EN → TR"><span class="flag-pair"><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="İngiltere bayrağı"><rect width="60" height="40" fill="#fff"/><path d="M25 0h10v40H25zM0 15h60v10H0z" fill="#CE1124"/></svg><span class="flag-arrow">→</span><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="Türkiye bayrağı"><rect width="60" height="40" fill="#E30A17"/><circle cx="25" cy="20" r="12" fill="white"/><circle cx="29" cy="20" r="9.5" fill="#E30A17"/><path d="M39 13.7 L40.8 18 L45.5 18.3 L41.9 21.4 L43 25.9 L39 23.4 L35 25.9 L36.1 21.4 L32.5 18.3 L37.2 18 Z" fill="white"/></svg></span></button><button type="button" class="mode-btn ${mode==="tr-en"?"active":""}" data-mode="tr-en" aria-label="Türkçeden İngilizceye" title="TR → EN"><span class="flag-pair"><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="Türkiye bayrağı"><rect width="60" height="40" fill="#E30A17"/><circle cx="25" cy="20" r="12" fill="white"/><circle cx="29" cy="20" r="9.5" fill="#E30A17"/><path d="M39 13.7 L40.8 18 L45.5 18.3 L41.9 21.4 L43 25.9 L39 23.4 L35 25.9 L36.1 21.4 L32.5 18.3 L37.2 18 Z" fill="white"/></svg><span class="flag-arrow">→</span><svg class="flag-icon" viewBox="0 0 60 40" role="img" aria-label="İngiltere bayrağı"><rect width="60" height="40" fill="#fff"/><path d="M25 0h10v40H25zM0 15h60v10H0z" fill="#CE1124"/></svg></span></button></div></div><div id="slot"></div>`);
  document.querySelectorAll("[data-mode]").forEach(b=>{b.onclick=()=>{
   if(busy)return;mode=b.dataset.mode;flipped=false;
   document.querySelectorAll("[data-mode]").forEach(el=>el.classList.toggle("active",el===b));
@@ -131,7 +136,7 @@ function study(){
   $("#slot").innerHTML=`<div class="empty"><h2>${data.words.length?"🎉 Kartlar tamamlandı":"📚 Henüz kelime yok"}</h2><button class="primary" id="start">${data.words.length?"Tekrar başlat":"Kelime ekle"}</button></div>`;
   $("#start").onclick=()=>{if(data.words.length)resetDeck();else page="add";render()};return;
  }
- $("#slot").innerHTML=`<div class="deck" id="deck">${cardMarkup(queue[pos+2],2)}${cardMarkup(queue[pos+1],1)}${cardMarkup(c,0)}</div><div class="legend"><span>← Bilmiyorum</span><span>Dokun: Çevir</span><span>Biliyorum →</span></div>`;
+ $("#slot").innerHTML=`<div class="deck" id="deck">${cardMarkup(queue[pos+3],3)}${cardMarkup(queue[pos+2],2)}${cardMarkup(queue[pos+1],1)}${cardMarkup(c,0)}</div><div class="legend"><span>${englishUI?"← Don't know":"← Bilmiyorum"}</span><span>${englishUI?"Tap to flip":"Dokun: Çevir"}</span><span>${englishUI?"I know →":"Biliyorum →"}</span></div>`;
  bindSwipe();
 }
 function flip(){if(busy)return;flipped=!flipped;$("#deck .motion .inner")?.classList.toggle("flip",flipped)}
