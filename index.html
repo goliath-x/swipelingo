@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#10121B">
 <title>SwipeLingo</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
 <style>
 :root{
   color-scheme:dark;
@@ -18,103 +19,165 @@
   --purple:#C6A2F5;
   --line:rgba(255,255,255,.09);
   --font:-apple-system,BlinkMacSystemFont,
-    "SF Pro Display","SF Pro Text","Segoe UI",sans-serif;
+  "SF Pro Display","SF Pro Text","Segoe UI",sans-serif;
 }
 *{box-sizing:border-box}
 html,body{
-  margin:0;min-height:100%;
-  background:var(--bg);color:var(--text);
+  margin:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
   font-family:var(--font);
   -webkit-font-smoothing:antialiased;
 }
-body{overflow-x:hidden;overscroll-behavior-y:none}
+body{
+  overflow-x:hidden;
+  overscroll-behavior-y:none;
+}
 button,input{font:inherit}
-button{cursor:pointer;-webkit-tap-highlight-color:transparent}
-button:focus-visible,input:focus-visible,.deck:focus-visible{
-  outline:2px solid var(--purple);outline-offset:3px
+button{
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+button:focus-visible,
+input:focus-visible,
+.deck:focus-visible{
+  outline:2px solid var(--purple);
+  outline-offset:3px;
 }
 #app{
   width:min(100%,520px);
-  min-height:100dvh;margin:auto;
+  min-height:100dvh;
+  margin:auto;
   padding:max(12px,env(safe-area-inset-top))
     20px max(12px,env(safe-area-inset-bottom));
-  display:flex;flex-direction:column;
+  display:flex;
+  flex-direction:column;
 }
 .header{
-  display:flex;align-items:center;
-  justify-content:center;min-height:38px;flex-shrink:0
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:38px;
+  flex-shrink:0;
 }
 .logo{
-  font-size:27px;font-weight:850;
-  letter-spacing:-1.25px;line-height:1.1
+  font-size:27px;
+  font-weight:850;
+  letter-spacing:-1.25px;
+  line-height:1.1;
 }
 .logo span{color:var(--purple)}
 .logo-mark{
-  color:var(--purple);font-size:16px;
-  vertical-align:top;margin-left:3px
+  color:var(--purple);
+  font-size:16px;
+  vertical-align:top;
+  margin-left:3px;
 }
 .navigation{
-  display:flex;gap:4px;margin-top:14px;
-  padding:4px;border:1px solid var(--line);
+  display:flex;
+  gap:4px;
+  margin-top:14px;
+  padding:4px;
+  border:1px solid var(--line);
   background:var(--surface);
-  border-radius:17px;flex-shrink:0
+  border-radius:17px;
+  flex-shrink:0;
 }
 .navigation button{
-  flex:1;min-height:44px;border:0;
-  border-radius:13px;background:transparent;
-  color:var(--secondary);font-size:15px;
-  font-weight:750;letter-spacing:-.3px;
-  transition:background .2s,color .2s,transform .2s
+  flex:1;
+  min-height:44px;
+  border:0;
+  border-radius:13px;
+  background:transparent;
+  color:var(--secondary);
+  font-size:15px;
+  font-weight:750;
+  letter-spacing:-.3px;
+  transition:background .2s,color .2s,transform .2s;
 }
 .navigation button.selected{
-  background:#E6D4FF;color:#261C36
+  background:#E6D4FF;
+  color:#261C36;
 }
 .navigation button:active{transform:scale(.97)}
 .content{
-  flex:1;min-height:0;display:flex;flex-direction:column
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
 }
 .summary{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:8px;margin-top:16px
+  gap:8px;
+  margin-top:16px;
 }
-.metric{text-align:center;min-width:0}
+.metric{
+  text-align:center;
+  min-width:0;
+}
 .metric strong{
-  display:block;font-size:22px;font-weight:780;
-  letter-spacing:-.7px;font-variant-numeric:tabular-nums
+  display:block;
+  font-size:22px;
+  font-weight:780;
+  letter-spacing:-.7px;
+  font-variant-numeric:tabular-nums;
 }
 .metric span{
-  display:block;margin-top:2px;font-size:12px;
-  color:var(--secondary)
+  display:block;
+  margin-top:2px;
+  font-size:12px;
+  color:var(--secondary);
 }
 .metric:nth-child(2) strong{color:#8BE0B4}
 .metric:nth-child(3) strong{color:#F2A3AD}
 .controls{
-  display:flex;align-items:center;
-  justify-content:space-between;gap:10px;
-  margin-top:16px;min-height:48px
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:16px;
+  min-height:48px;
 }
 .progress{
-  font-size:13px;color:var(--secondary);
-  font-weight:600;font-variant-numeric:tabular-nums
+  font-size:13px;
+  color:var(--secondary);
+  font-weight:600;
+  font-variant-numeric:tabular-nums;
 }
-.modes{display:flex;align-items:center;gap:2px}
+.modes{
+  display:flex;
+  align-items:center;
+  gap:2px;
+}
 .mode{
-  height:46px;min-width:48px;padding:0 6px;
-  background:transparent;color:var(--secondary);
-  border:0;border-radius:13px;
-  display:flex;justify-content:center;
-  align-items:center;gap:2px;position:relative;
-  transition:background .2s,transform .2s
+  height:46px;
+  min-width:48px;
+  padding:0 6px;
+  background:transparent;
+  color:var(--secondary);
+  border:0;
+  border-radius:13px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:2px;
+  position:relative;
+  transition:background .2s,transform .2s;
 }
 .mode.active{
   background:rgba(198,162,245,.13);
-  color:var(--purple)
+  color:var(--purple);
 }
 .mode.active:after{
-  content:"";position:absolute;bottom:3px;
-  width:15px;height:3px;border-radius:5px;
-  background:var(--purple)
+  content:"";
+  position:absolute;
+  bottom:3px;
+  width:15px;
+  height:3px;
+  border-radius:5px;
+  background:var(--purple);
 }
 .mode.pulse{animation:pulse .28s ease}
 @keyframes pulse{
@@ -122,235 +185,368 @@ button:focus-visible,input:focus-visible,.deck:focus-visible{
   50%{transform:scale(1.09)}
 }
 .flag{
-  display:block;width:25px;height:17px;
-  border-radius:3px;overflow:hidden;
-  box-shadow:0 0 0 .5px #ffffff35;flex-shrink:0
+  display:block;
+  width:25px;
+  height:17px;
+  border-radius:3px;
+  overflow:hidden;
+  box-shadow:0 0 0 .5px #ffffff35;
+  flex-shrink:0;
 }
-.flag svg{display:block;width:100%;height:100%}
+.flag svg{
+  display:block;
+  width:100%;
+  height:100%;
+}
 .mode-arrow{font-size:12px;opacity:.8}
 .shuffle-svg{width:22px;height:22px}
+
+/* CARD DECK */
+
 .study-area{
-  flex:1;display:flex;flex-direction:column;min-height:0
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
 }
 .deck{
-  position:relative;width:100%;
+  position:relative;
+  width:100%;
   height:clamp(215px,calc(100dvh - 290px),430px);
-  max-height:100%;margin:14px auto 0;
+  max-height:100%;
+  margin:14px auto 0;
   perspective:1500px;
-  touch-action:none;overscroll-behavior:contain;
-  user-select:none;-webkit-user-select:none;
-  flex-shrink:1;cursor:grab;
-  -webkit-tap-highlight-color:transparent
+  touch-action:none;
+  overscroll-behavior:contain;
+  user-select:none;
+  -webkit-user-select:none;
+  flex-shrink:1;
+  cursor:grab;
+  -webkit-tap-highlight-color:transparent;
 }
 .deck:active{cursor:grabbing}
 .deck-card{
-  position:absolute;inset:20px 28px;
+  position:absolute;
+  inset:20px 28px;
   border-radius:25px;
   transform:
     translate3d(var(--x,0px),var(--y,0px),0)
-    rotate(var(--r,0deg)) scale(var(--s,1));
+    rotate(var(--r,0deg))
+    scale(var(--s,1));
   opacity:var(--o,1);
   transform-origin:center;
   will-change:transform,opacity;
-  pointer-events:none
+  pointer-events:none;
 }
 .deck-card.frontmost{pointer-events:auto}
 .deck-card.animated{
   transition:
     transform .34s cubic-bezier(.22,.8,.25,1),
-    opacity .34s ease
+    opacity .34s ease;
 }
 .card-inner{
-  width:100%;height:100%;position:relative;
+  width:100%;
+  height:100%;
+  position:relative;
   transform-style:preserve-3d;
   -webkit-transform-style:preserve-3d;
   transform:rotateY(0deg);
   transition:transform 560ms cubic-bezier(.2,.76,.23,1);
-  will-change:transform;pointer-events:none
+  will-change:transform;
+  pointer-events:none;
 }
 .card-inner.flipped{transform:rotateY(180deg)}
 .card-face{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  padding:26px;border-radius:25px;
-  background:var(--card-color);color:#fff;
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:26px;
+  border-radius:25px;
+  background:var(--card-color);
+  color:#fff;
   text-align:center;
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
   transform:translateZ(.5px);
   -webkit-transform:translateZ(.5px);
   overflow:hidden;
-  box-shadow:0 12px 30px rgba(0,0,0,.20)
+  box-shadow:0 12px 30px rgba(0,0,0,.20);
 }
 .card-face.back{
   transform:rotateY(180deg) translateZ(.5px);
-  -webkit-transform:rotateY(180deg) translateZ(.5px)
+  -webkit-transform:rotateY(180deg) translateZ(.5px);
 }
 .card-face::after{
-  content:"";position:absolute;inset:0;
+  content:"";
+  position:absolute;
+  inset:0;
   background:linear-gradient(
-    160deg,rgba(255,255,255,.11),
-    transparent 46%,rgba(0,0,0,.09)
+    160deg,
+    rgba(255,255,255,.11),
+    transparent 46%,
+    rgba(0,0,0,.09)
   );
-  pointer-events:none
+  pointer-events:none;
 }
 .card-language{
-  position:absolute;top:23px;left:15px;right:15px;
-  font-size:12px;font-weight:800;
-  letter-spacing:1.6px;text-transform:uppercase
+  position:absolute;
+  top:23px;
+  left:15px;
+  right:15px;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
 }
 .card-word{
   font-size:clamp(27px,7.5vw,45px);
-  font-weight:780;letter-spacing:-1px;
-  line-height:1.15;overflow-wrap:anywhere;
-  max-height:65%;overflow:hidden
+  font-weight:780;
+  letter-spacing:-1px;
+  line-height:1.15;
+  overflow-wrap:anywhere;
+  max-height:65%;
+  overflow:hidden;
+}
+.card-word.combined-meanings{
+  font-size:clamp(19px,5.3vw,30px);
+  line-height:1.3;
+  max-height:68%;
+  overflow-wrap:anywhere;
 }
 .card-hint{
-  position:absolute;bottom:23px;left:10px;right:10px;
-  font-size:13px;font-weight:600;opacity:.92
+  position:absolute;
+  bottom:23px;
+  left:10px;
+  right:10px;
+  font-size:13px;
+  font-weight:600;
+  opacity:.92;
 }
 .instructions{
-  display:flex;align-items:center;
-  justify-content:space-between;gap:6px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:6px;
   margin:15px 0 4px;
-  color:var(--secondary);font-size:12px;
-  font-weight:650;flex-shrink:0
+  color:var(--secondary);
+  font-size:12px;
+  font-weight:650;
+  flex-shrink:0;
 }
 .instructions span:nth-child(1){color:#F2A3AD}
 .instructions span:nth-child(2){text-align:center}
 .instructions span:nth-child(3){
-  color:#8BE0B4;text-align:right
+  color:#8BE0B4;
+  text-align:right;
 }
 .footer{
-  text-align:center;margin-top:auto;
-  padding-top:14px;color:#777E93;
-  font-size:11px;flex-shrink:0
+  text-align:center;
+  margin-top:auto;
+  padding-top:14px;
+  color:#777E93;
+  font-size:11px;
+  flex-shrink:0;
 }
+
+/* EMPTY STATES */
+
 .empty{
-  margin:auto 0;padding:32px 14px;text-align:center
+  margin:auto 0;
+  padding:32px 14px;
+  text-align:center;
 }
 .empty-icon{font-size:42px}
 .empty h2{font-size:21px;letter-spacing:-.5px}
 .empty p{
-  color:var(--secondary);font-size:14px;line-height:1.5
+  color:var(--secondary);
+  font-size:14px;
+  line-height:1.5;
 }
 .primary{
-  min-height:48px;padding:12px 22px;border:0;
-  border-radius:14px;background:var(--purple);
-  color:#211A30;font-size:15px;font-weight:800
+  min-height:48px;
+  padding:12px 22px;
+  border:0;
+  border-radius:14px;
+  background:var(--purple);
+  color:#211A30;
+  font-size:15px;
+  font-weight:800;
 }
 .secondary-button{
-  min-height:44px;border:1px solid var(--line);
-  background:var(--surface2);color:var(--text);
-  border-radius:13px;padding:10px 14px;
-  font-size:14px;font-weight:650
+  min-height:44px;
+  border:1px solid var(--line);
+  background:var(--surface2);
+  color:var(--text);
+  border-radius:13px;
+  padding:10px 14px;
+  font-size:14px;
+  font-weight:650;
 }
-.add-page{padding-top:20px;padding-bottom:14px}
+
+/* ADD SCREEN */
+
+.add-page{
+  padding-top:20px;
+  padding-bottom:14px;
+}
 .page-title{
-  font-size:26px;font-weight:800;
-  letter-spacing:-.8px;margin:0 0 6px
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:-.8px;
+  margin:0 0 6px;
 }
 .page-subtitle{
-  color:var(--secondary);font-size:14px;
-  line-height:1.5;margin:0 0 19px
+  color:var(--secondary);
+  font-size:14px;
+  line-height:1.5;
+  margin:0 0 19px;
 }
 .form-panel{
   background:var(--surface);
   border:1px solid var(--line);
-  border-radius:20px;padding:16px
+  border-radius:20px;
+  padding:16px;
 }
 .form-label{
-  display:block;font-size:13px;color:#D8D9E5;
-  font-weight:750;margin:10px 0 8px
+  display:block;
+  font-size:13px;
+  color:#D8D9E5;
+  font-weight:750;
+  margin:10px 0 8px;
 }
 .text-field{
-  width:100%;min-height:48px;
+  width:100%;
+  min-height:48px;
   background:var(--surface2);
   border:1px solid rgba(255,255,255,.11);
-  border-radius:13px;color:var(--text);
-  padding:12px 14px;outline:0;font-size:16px
+  border-radius:13px;
+  color:var(--text);
+  padding:12px 14px;
+  outline:0;
+  font-size:16px;
 }
 .text-field:focus{border-color:var(--purple)}
 .text-field::placeholder{color:#888D9E}
 .meaning-row{
-  display:flex;gap:8px;align-items:center;
-  margin-bottom:9px
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:9px;
 }
 .meaning-row input{min-width:0;flex:1}
 .remove{
-  min-width:44px;min-height:48px;border:0;
-  border-radius:12px;background:#453038;
-  color:#FFB2BD;font-size:24px
+  min-width:44px;
+  min-height:48px;
+  border:0;
+  border-radius:12px;
+  background:#453038;
+  color:#FFB2BD;
+  font-size:24px;
 }
-.form-actions{display:flex;gap:8px;margin-top:20px}
+.form-actions{
+  display:flex;
+  gap:8px;
+  margin-top:20px;
+}
 .form-actions>*{flex:1}
 .error{
-  color:#FFADB8;font-size:13px;
-  min-height:16px;margin-top:9px
+  color:#FFADB8;
+  font-size:13px;
+  min-height:16px;
+  margin-top:9px;
 }
 .saved-section{margin-top:24px}
 .saved-heading{
-  display:flex;justify-content:space-between;
-  align-items:center;font-size:15px;
-  font-weight:750;margin-bottom:10px
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:15px;
+  font-weight:750;
+  margin-bottom:10px;
 }
 .saved-count{
-  color:var(--secondary);font-size:12px
+  color:var(--secondary);
+  font-size:12px;
 }
 .saved-item{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:12px;
-  border-bottom:1px solid var(--line);padding:12px 0
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  border-bottom:1px solid var(--line);
+  padding:12px 0;
 }
 .saved-item strong{font-size:15px}
 .saved-item p{
-  color:var(--secondary);font-size:12px;
-  line-height:1.5;margin:4px 0 0;
-  overflow-wrap:anywhere
+  color:var(--secondary);
+  font-size:12px;
+  line-height:1.5;
+  margin:4px 0 0;
+  overflow-wrap:anywhere;
 }
 .saved-actions{display:flex;gap:4px}
 .icon-button{
-  min-width:44px;min-height:44px;border:0;
-  background:transparent;color:var(--secondary);
-  font-size:20px;border-radius:12px
+  min-width:44px;
+  min-height:44px;
+  border:0;
+  background:transparent;
+  color:var(--secondary);
+  font-size:20px;
+  border-radius:12px;
 }
+
+/* RESPONSIVE */
+
 @media(min-width:600px){
   #app{max-width:480px}
   .deck{
-    height:clamp(210px,calc(100dvh - 270px),410px)
+    height:clamp(210px,calc(100dvh - 270px),410px);
   }
 }
 @media(max-height:610px){
-  #app{padding-top:6px;padding-bottom:6px}
+  #app{
+    padding-top:6px;
+    padding-bottom:6px;
+  }
   .navigation{margin-top:7px}
   .summary{margin-top:7px}
   .controls{margin-top:6px}
   .deck{
     margin-top:5px;
-    height:clamp(145px,calc(100dvh - 235px),310px)
+    height:clamp(145px,calc(100dvh - 235px),310px);
   }
   .instructions{margin-top:6px}
   .footer{padding-top:5px}
 }
 @media(prefers-reduced-motion:reduce){
   .deck-card.animated{
-    transition-duration:.01ms!important
+    transition-duration:.01ms!important;
   }
-  .card-inner{transition-duration:.01ms!important}
+  .card-inner{
+    transition-duration:.01ms!important;
+  }
   .mode.pulse{animation:none!important}
 }
 </style>
 </head>
+
 <body>
 <div id="app"></div>
+
 <script>
 (()=>{
 "use strict";
 
+/* TELEGRAM SETUP */
+
 const tg=window.Telegram?.WebApp;
+
 try{
   tg?.ready();
   tg?.expand();
+
   if(tg?.isVersionAtLeast?.("7.7")){
     tg.disableVerticalSwipes();
   }
@@ -358,7 +554,10 @@ try{
   console.warn("Telegram gesture configuration:",e);
 }
 
+/* CONFIGURATION */
+
 const KEY="swipelingo.v1";
+
 const reducedMotion=window.matchMedia(
   "(prefers-reduced-motion: reduce)"
 );
@@ -397,7 +596,10 @@ try{
 if(!data||!Array.isArray(data.words)){
   data={words:[],reviews:{}};
 }
-if(!data.reviews)data.reviews={};
+
+if(!data.reviews){
+  data.reviews={};
+}
 
 let page="study";
 let mode="mixed";
@@ -409,40 +611,89 @@ let editing=null;
 let meanings=[""];
 let sessionDirections={};
 
+/* STORAGE */
+
 function save(){
   try{
     localStorage.setItem(KEY,JSON.stringify(data));
   }catch(e){
-    alert("Veriler kaydedilemedi.");
+    alert(
+      "Veriler kaydedilemedi. Depolama alanını kontrol et."
+    );
   }
 }
 
+/*
+  EN -> TR:
+  One English word = one card.
+  All Turkish meanings are joined by commas.
+
+  TR -> EN:
+  Each Turkish meaning = separate card.
+
+  MIXED:
+  One direction is selected for each word.
+  The corresponding rule is applied.
+*/
+
 function allCards(){
-  return data.words.flatMap(w=>
-    (w.meanings||[]).map(m=>({
+  return data.words.flatMap(w=>{
+    const items=(w.meanings||[]).filter(
+      m=>String(m.tr||"").trim()
+    );
+
+    if(!items.length)return [];
+
+    const selected=mode==="mixed"
+      ?(
+        sessionDirections[w.id]??=(
+          Math.random()<.5?"en-tr":"tr-en"
+        )
+      )
+      :mode;
+
+    if(selected==="en-tr"){
+      return [{
+        id:"word:"+w.id,
+        wordId:w.id,
+        en:w.en,
+        tr:items.map(m=>m.tr.trim()).join(", "),
+        dir:"en-tr",
+        combined:items.length>1
+      }];
+    }
+
+    return items.map(m=>({
       id:m.id,
       wordId:w.id,
       en:w.en,
-      tr:m.tr
-    }))
-  );
+      tr:m.tr,
+      dir:"tr-en",
+      combined:false
+    }));
+  });
 }
 
 function shuffle(a){
   const result=[...a];
+
   for(let i=result.length-1;i>0;i--){
     const j=Math.floor(Math.random()*(i+1));
-    [result[i],result[j]]=[result[j],result[i]];
+
+    [result[i],result[j]]=[
+      result[j],result[i]
+    ];
   }
+
   return result;
 }
 
 function resetDeck(){
+  sessionDirections={};
   queue=shuffle(allCards());
   pos=0;
   busy=false;
   flipped=false;
-  sessionDirections={};
 }
 
 function current(){
@@ -451,151 +702,219 @@ function current(){
 
 function cardColor(c){
   let h=2166136261;
+
   for(const char of String(c.id)){
     h^=char.charCodeAt(0);
     h=Math.imul(h,16777619);
   }
+
   return colors[(h>>>0)%colors.length];
 }
 
 function direction(c){
-  if(mode!=="mixed")return mode;
-
-  if(!sessionDirections[c.id]){
-    sessionDirections[c.id]=
-      Math.random()<.5?"en-tr":"tr-en";
-  }
-  return sessionDirections[c.id];
+  return c.dir;
 }
 
 function stats(){
-  let yes=0,no=0;
+  let yes=0;
+  let no=0;
+
   Object.values(data.reviews).forEach(r=>{
     yes+=r.yes||0;
     no+=r.no||0;
   });
-  return{yes,no,total:allCards().length};
+
+  return{
+    yes,
+    no,
+    total:queue.length
+  };
 }
 
 function texts(dir){
-  return dir==="tr-en"
-    ?{
+  if(dir==="tr-en"){
+    return{
       front:"Türkçe",
       back:"İngilizce",
       left:"Bilmiyorum",
       right:"Biliyorum",
       tap:"Dokun: Çevir"
-    }
-    :{
-      front:"English",
-      back:"Turkish",
-      left:"Don't know",
-      right:"I know",
-      tap:"Tap to flip"
     };
+  }
+
+  return{
+    front:"English",
+    back:"Turkish",
+    left:"Don't know",
+    right:"I know",
+    tap:"Tap to flip"
+  };
 }
+
+/* FLAGS AND ICONS */
 
 const enFlag=`
 <svg viewBox="0 0 60 40" aria-hidden="true">
-<rect width="60" height="40" fill="#fff"/>
-<path d="M25 0H35V40H25Z M0 15H60V25H0Z"
- fill="#CE1124"/>
+  <rect width="60" height="40" fill="#fff"/>
+  <path
+    d="M25 0H35V40H25Z M0 15H60V25H0Z"
+    fill="#CE1124"/>
 </svg>`;
 
 const trFlag=`
 <svg viewBox="0 0 60 40" aria-hidden="true">
-<rect width="60" height="40" fill="#E30A17"/>
-<circle cx="24" cy="20" r="12" fill="#fff"/>
-<circle cx="28" cy="20" r="9.5" fill="#E30A17"/>
-<path d="M39 12L41.3 17.5L47 18L42.6 21.7
-L44 27L39 24L34 27L35.4 21.7L31 18
-L36.7 17.5Z" fill="#fff"/>
+  <rect width="60" height="40" fill="#E30A17"/>
+  <circle cx="24" cy="20" r="12" fill="#fff"/>
+  <circle cx="28" cy="20" r="9.5" fill="#E30A17"/>
+  <path
+    d="M39 12L41.3 17.5L47 18L42.6 21.7
+    L44 27L39 24L34 27L35.4 21.7L31 18
+    L36.7 17.5Z"
+    fill="#fff"/>
 </svg>`;
 
 const shuffleIcon=`
-<svg class="shuffle-svg" viewBox="0 0 24 24"
-fill="none" stroke="currentColor" stroke-width="2"
-stroke-linecap="round" stroke-linejoin="round"
-aria-hidden="true">
-<path d="m18 14 4 4-4 4"/>
-<path d="m18 2 4 4-4 4"/>
-<path d="M2 18h2.5c2.5 0 4-1 6-4l3-4
-c2-3 3.5-4 6-4H22"/>
-<path d="M2 6h2.5c2.5 0 4 1 6 4"/>
-<path d="M14 14c2 3 3.5 4 6 4h2"/>
+<svg
+  class="shuffle-svg"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true">
+  <path d="m18 14 4 4-4 4"/>
+  <path d="m18 2 4 4-4 4"/>
+  <path d="M2 18h2.5c2.5 0 4-1 6-4l3-4
+    c2-3 3.5-4 6-4H22"/>
+  <path d="M2 6h2.5c2.5 0 4 1 6 4"/>
+  <path d="M14 14c2 3 3.5 4 6 4h2"/>
 </svg>`;
 
 function modeIcon(m){
-  if(m==="mixed")return shuffleIcon;
-  return`
+  if(m==="mixed"){
+    return shuffleIcon;
+  }
+
+  return `
     <span class="flag">
       ${m==="en-tr"?enFlag:trFlag}
     </span>
     <span class="mode-arrow">›</span>
     <span class="flag">
       ${m==="en-tr"?trFlag:enFlag}
-    </span>`;
+    </span>
+  `;
 }
+
+/* LAYOUT */
 
 function layout(content){
   $("#app").innerHTML=`
-  <header class="header">
-    <div class="logo">
-      Swipe<span>Lingo</span><span class="logo-mark">✦</span>
-    </div>
-  </header>
-  <nav class="navigation" aria-label="Ana menü">
-    <button type="button" data-page="study"
-      class="${page==="study"?"selected":""}">
-      Work
-    </button>
-    <button type="button" data-page="add"
-      class="${page==="add"?"selected":""}">
-      Add
-    </button>
-  </nav>
-  <main class="content">${content}</main>
-  <footer class="footer">SwipeLingo © 2026</footer>`;
+    <header class="header">
+      <div class="logo">
+        Swipe<span>Lingo</span>
+        <span class="logo-mark">✦</span>
+      </div>
+    </header>
+
+    <nav class="navigation" aria-label="Ana menü">
+      <button
+        type="button"
+        data-page="study"
+        class="${page==="study"?"selected":""}">
+        Work
+      </button>
+
+      <button
+        type="button"
+        data-page="add"
+        class="${page==="add"?"selected":""}">
+        Add
+      </button>
+    </nav>
+
+    <main class="content">
+      ${content}
+    </main>
+
+    <footer class="footer">
+      SwipeLingo © 2026
+    </footer>
+  `;
 
   document.querySelectorAll("[data-page]").forEach(b=>{
     b.onclick=()=>{
       if(busy)return;
+
       page=b.dataset.page;
       editing=null;
       meanings=[""];
+
       render();
     };
   });
 }
 
 function render(){
-  page==="study"?renderStudy():renderAdd();
+  if(page==="study"){
+    renderStudy();
+  }else{
+    renderAdd();
+  }
 }
+
+/* CARD MARKUP */
 
 function cardMarkup(c,index){
   const dir=direction(c);
   const labels=texts(dir);
+
   const front=dir==="en-tr"?c.en:c.tr;
   const back=dir==="en-tr"?c.tr:c.en;
 
-  return`
-  <div class="deck-card ${index===0?"frontmost":""}"
-    data-depth="${index}"
-    style="--card-color:${cardColor(c)}">
-    <div class="card-inner">
-      <div class="card-face">
-        <div class="card-language">${labels.front}</div>
-        <div class="card-word">${esc(front)}</div>
-        <div class="card-hint">${labels.tap}</div>
-      </div>
-      <div class="card-face back">
-        <div class="card-language">${labels.back}</div>
-        <div class="card-word">${esc(back)}</div>
-        <div class="card-hint">${labels.tap}</div>
+  return `
+    <div
+      class="deck-card ${index===0?"frontmost":""}"
+      data-depth="${index}"
+      style="--card-color:${cardColor(c)}">
+
+      <div class="card-inner">
+
+        <div class="card-face">
+          <div class="card-language">
+            ${labels.front}
+          </div>
+
+          <div class="card-word">
+            ${esc(front)}
+          </div>
+
+          <div class="card-hint">
+            ${labels.tap}
+          </div>
+        </div>
+
+        <div class="card-face back">
+          <div class="card-language">
+            ${labels.back}
+          </div>
+
+          <div class="card-word ${c.combined?"combined-meanings":""}">
+            ${esc(back)}
+          </div>
+
+          <div class="card-hint">
+            ${labels.tap}
+          </div>
+        </div>
+
       </div>
     </div>
-  </div>`;
+  `;
 }
+
+/* CARD STACK */
 
 const poses=[
   {y:0,s:1,r:-4,o:1},
@@ -606,22 +925,41 @@ const poses=[
 
 const lerp=(a,b,p)=>a+(b-a)*p;
 
-function paintStack(progress=0,animate=false,exitX=0){
-  const p=Math.max(0,Math.min(1,progress));
+function paintStack(
+  progress=0,
+  animate=false,
+  exitX=0
+){
+  const p=Math.max(
+    0,
+    Math.min(1,progress)
+  );
 
   document.querySelectorAll(".deck-card").forEach(el=>{
     const i=Number(el.dataset.depth);
     const a=poses[i];
-    let x=0,y=a.y,s=a.s,r=a.r,o=a.o;
+
+    let x=0;
+    let y=a.y;
+    let s=a.s;
+    let r=a.r;
+    let o=a.o;
 
     if(i===0){
       x=exitX;
+
       r=a.r+Math.max(
-        -26,Math.min(26,exitX/17)
+        -26,
+        Math.min(26,exitX/17)
       );
-      o=1-Math.min(1,Math.abs(exitX)/450);
+
+      o=1-Math.min(
+        1,
+        Math.abs(exitX)/450
+      );
     }else{
       const target=poses[i-1];
+
       y=lerp(a.y,target.y,p);
       s=lerp(a.s,target.s,p);
       r=lerp(a.r,target.r,p);
@@ -629,94 +967,145 @@ function paintStack(progress=0,animate=false,exitX=0){
     }
 
     el.classList.toggle(
-      "animated",animate&&!reducedMotion.matches
+      "animated",
+      animate&&!reducedMotion.matches
     );
+
     el.style.setProperty("--x",x+"px");
     el.style.setProperty("--y",y+"px");
     el.style.setProperty("--s",s);
     el.style.setProperty("--r",r+"deg");
     el.style.setProperty("--o",o);
+
     el.style.zIndex=20-i;
   });
 }
 
+/* STUDY SCREEN */
+
 function renderStudy(){
   const c=current();
   const s=stats();
-  const dir=c?direction(c):
-    mode==="tr-en"?"tr-en":"en-tr";
+
+  const dir=c
+    ?direction(c)
+    :mode==="tr-en"?"tr-en":"en-tr";
+
   const labels=texts(dir);
 
   layout(`
-  <div class="summary">
-    <div class="metric">
-      <strong>${s.total}</strong><span>Cards</span>
-    </div>
-    <div class="metric">
-      <strong>${s.yes}</strong><span>Known</span>
-    </div>
-    <div class="metric">
-      <strong>${s.no}</strong><span>Unknown</span>
-    </div>
-  </div>
+    <div class="summary">
 
-  <div class="controls">
-    <div class="progress">
-      ${c?`${pos+1} / ${queue.length}`:"0 / 0"}
-    </div>
-    <div class="modes" role="group"
-      aria-label="Çalışma yönü">
-      ${["mixed","en-tr","tr-en"].map(m=>`
-      <button type="button"
-        class="mode ${mode===m?"active":""}"
-        data-mode="${m}"
-        aria-label="${
-          m==="mixed"?"Karışık":
-          m==="en-tr"?"English to Turkish":
-          "Turkish to English"
-        }"
-        aria-pressed="${mode===m}">
-        ${modeIcon(m)}
-      </button>`).join("")}
-    </div>
-  </div>
-
-  <section class="study-area">
-  ${c?`
-    <div class="deck" id="deck"
-      role="group" aria-label="Kelime kartları">
-      ${queue.slice(pos,pos+4)
-        .map(cardMarkup).reverse().join("")}
-    </div>
-    <div class="instructions">
-      <span>← ${labels.left}</span>
-      <span>${labels.tap}</span>
-      <span>${labels.right} →</span>
-    </div>
-  `:`
-    <div class="empty">
-      <div class="empty-icon">
-        ${data.words.length?"✦":"✎"}
+      <div class="metric">
+        <strong>${s.total}</strong>
+        <span>Cards</span>
       </div>
-      <h2>${
-        data.words.length?
-        "Session complete":"Your first word awaits"
-      }</h2>
-      <p>${
-        data.words.length?
-        "You've reviewed all the cards in this session.":
-        "Add a word and its meanings to begin."
-      }</p>
-      <button type="button" class="primary" id="start">
-        ${data.words.length?"Study again":"Add a word"}
-      </button>
+
+      <div class="metric">
+        <strong>${s.yes}</strong>
+        <span>Known</span>
+      </div>
+
+      <div class="metric">
+        <strong>${s.no}</strong>
+        <span>Unknown</span>
+      </div>
+
     </div>
-  `}
-  </section>`);
+
+    <div class="controls">
+
+      <div class="progress">
+        ${c?`${pos+1} / ${queue.length}`:"0 / 0"}
+      </div>
+
+      <div class="modes"
+        role="group"
+        aria-label="Çalışma yönü">
+
+        ${["mixed","en-tr","tr-en"].map(m=>`
+          <button
+            type="button"
+            class="mode ${mode===m?"active":""}"
+            data-mode="${m}"
+            aria-label="${
+              m==="mixed"
+                ?"Karışık"
+                :m==="en-tr"
+                  ?"English to Turkish"
+                  :"Turkish to English"
+            }"
+            aria-pressed="${mode===m}">
+            ${modeIcon(m)}
+          </button>
+        `).join("")}
+
+      </div>
+    </div>
+
+    <section class="study-area">
+
+      ${c?`
+        <div
+          class="deck"
+          id="deck"
+          role="group"
+          aria-label="Kelime kartları">
+
+          ${queue
+            .slice(pos,pos+4)
+            .map(cardMarkup)
+            .reverse()
+            .join("")}
+
+        </div>
+
+        <div class="instructions">
+          <span>← ${labels.left}</span>
+          <span>${labels.tap}</span>
+          <span>${labels.right} →</span>
+        </div>
+
+      `:`
+
+        <div class="empty">
+
+          <div class="empty-icon">
+            ${data.words.length?"✦":"✎"}
+          </div>
+
+          <h2>
+            ${data.words.length
+              ?"Session complete"
+              :"Your first word awaits"}
+          </h2>
+
+          <p>
+            ${data.words.length
+              ?"You've reviewed all the cards in this session."
+              :"Add a word and its meanings to begin."}
+          </p>
+
+          <button
+            type="button"
+            class="primary"
+            id="start">
+
+            ${data.words.length
+              ?"Study again"
+              :"Add a word"}
+
+          </button>
+        </div>
+      `}
+
+    </section>
+  `);
 
   document.querySelectorAll("[data-mode]").forEach(btn=>{
     btn.onclick=()=>{
       if(busy)return;
+
       const next=btn.dataset.mode;
 
       if(mode===next){
@@ -725,9 +1114,10 @@ function renderStudy(){
         btn.classList.add("pulse");
         return;
       }
+
       mode=next;
-      flipped=false;
-      sessionDirections={};
+      resetDeck();
+
       renderStudy();
 
       document.querySelector(".mode.active")
@@ -737,10 +1127,15 @@ function renderStudy(){
 
   if(!c){
     $("#start").onclick=()=>{
-      if(data.words.length)resetDeck();
-      else page="add";
+      if(data.words.length){
+        resetDeck();
+      }else{
+        page="add";
+      }
+
       render();
     };
+
     return;
   }
 
@@ -748,41 +1143,67 @@ function renderStudy(){
   bindGestures();
 }
 
+/* 3D CARD FLIP */
+
 function flipCard(){
   if(busy||!current())return;
 
   const inner=document.querySelector(
     '.deck-card[data-depth="0"] .card-inner'
   );
+
   if(!inner)return;
 
   flipped=!flipped;
-  inner.classList.toggle("flipped",flipped);
+
+  inner.classList.toggle(
+    "flipped",
+    flipped
+  );
 
   try{
     tg?.HapticFeedback?.selectionChanged();
   }catch(e){}
 }
 
+/* REVIEW */
+
 function review(known){
   if(busy||!current())return;
+
   busy=true;
 
   const c=current();
   const key=c.id+"|"+direction(c);
-  data.reviews[key]??={yes:0,no:0};
-  data.reviews[key][known?"yes":"no"]++;
+
+  data.reviews[key]??={
+    yes:0,
+    no:0
+  };
+
+  data.reviews[key][
+    known?"yes":"no"
+  ]++;
+
   save();
 
   try{
     tg?.HapticFeedback?.impactOccurred("light");
   }catch(e){}
 
-  const distance=Math.max(window.innerWidth,700);
-  const duration=reducedMotion.matches?0:340;
+  const distance=Math.max(
+    window.innerWidth,
+    700
+  );
+
+  const duration=reducedMotion.matches
+    ?0
+    :340;
 
   paintStack(
-    1,true,known?distance:-distance
+    1,
+    true,
+    known?distance:-distance
   );
 
   window.setTimeout(()=>{
@@ -793,26 +1214,38 @@ function review(known){
   },duration);
 }
 
+/* TOUCH AND SWIPE */
+
 function bindGestures(){
   const deck=$("#deck");
 
   let active=false;
   let pointerId=null;
-  let sx=0,sy=0;
-  let dx=0,dy=0;
+
+  let sx=0;
+  let sy=0;
+  let dx=0;
+  let dy=0;
+
   let moved=false;
 
   const TAP_SLOP=14;
 
   deck.addEventListener("pointerdown",e=>{
-    if(busy||active)return;
-    if(e.pointerType==="mouse"&&e.button!==0)return;
+    if(
+      busy||
+      active||
+      (e.pointerType==="mouse"&&e.button!==0)
+    )return;
 
     active=true;
     pointerId=e.pointerId;
+
     sx=e.clientX;
     sy=e.clientY;
-    dx=dy=0;
+
+    dx=0;
+    dy=0;
     moved=false;
 
     try{
@@ -821,7 +1254,11 @@ function bindGestures(){
   });
 
   deck.addEventListener("pointermove",e=>{
-    if(!active||busy||e.pointerId!==pointerId)return;
+    if(
+      !active||
+      busy||
+      e.pointerId!==pointerId
+    )return;
 
     dx=e.clientX-sx;
     dy=e.clientY-sy;
@@ -833,20 +1270,23 @@ function bindGestures(){
     if(moved){
       paintStack(
         Math.min(1,Math.abs(dx)/140),
-        false,dx
+        false,
+        dx
       );
     }
   });
 
   deck.addEventListener("pointerup",e=>{
     if(!active||e.pointerId!==pointerId)return;
+
     active=false;
 
     dx=e.clientX-sx;
     dy=e.clientY-sy;
 
     const threshold=Math.min(
-      95,deck.clientWidth*.23
+      95,
+      deck.clientWidth*.23
     );
 
     if(
@@ -870,7 +1310,9 @@ function bindGestures(){
   });
 
   deck.addEventListener("touchmove",e=>{
-    if(e.cancelable)e.preventDefault();
+    if(e.cancelable){
+      e.preventDefault();
+    }
   },{passive:false});
 
   deck.tabIndex=0;
@@ -891,56 +1333,82 @@ function bindGestures(){
   });
 }
 
+/* ADD SCREEN */
+
 function renderAdd(){
-  const w=data.words.find(x=>x.id===editing);
+  const w=data.words.find(
+    x=>x.id===editing
+  );
 
   layout(`
-  <div class="add-page">
-    <h1 class="page-title">
-      ${w?"Edit word":"Add a word"}
-    </h1>
-    <p class="page-subtitle">
-      Add each meaning separately.
-      Every meaning becomes its own flashcard.
-    </p>
+    <div class="add-page">
 
-    <div class="form-panel">
-      <label class="form-label" for="english">
-        English word
-      </label>
-      <input class="text-field" id="english"
-        maxlength="120" placeholder="e.g. run"
-        value="${esc(w?.en||"")}">
+      <h1 class="page-title">
+        ${w?"Edit word":"Add a word"}
+      </h1>
 
-      <label class="form-label">
-        Turkish meanings
-      </label>
-      <div id="meaning-rows"></div>
+      <p class="page-subtitle">
+        Add each meaning separately.
+        Every meaning becomes its own flashcard.
+      </p>
 
-      <button type="button"
-        class="secondary-button" id="add-meaning">
-        + Add meaning
-      </button>
+      <div class="form-panel">
 
-      <div class="error" id="error" role="alert"></div>
-      <div class="form-actions">
-        <button type="button"
-          class="primary" id="save-word">
-          ${w?"Save changes":"Save word"}
+        <label class="form-label" for="english">
+          English word
+        </label>
+
+        <input
+          class="text-field"
+          id="english"
+          maxlength="120"
+          placeholder="e.g. run"
+          value="${esc(w?.en||"")}">
+
+        <label class="form-label">
+          Turkish meanings
+        </label>
+
+        <div id="meaning-rows"></div>
+
+        <button
+          type="button"
+          class="secondary-button"
+          id="add-meaning">
+          + Add meaning
         </button>
-      </div>
-    </div>
 
-    <div class="saved-section">
-      <div class="saved-heading">
-        <span>Saved words</span>
-        <span class="saved-count">
-          ${data.words.length}
-        </span>
+        <div
+          class="error"
+          id="error"
+          role="alert">
+        </div>
+
+        <div class="form-actions">
+          <button
+            type="button"
+            class="primary"
+            id="save-word">
+            ${w?"Save changes":"Save word"}
+          </button>
+        </div>
+
       </div>
-      <div id="saved-list"></div>
+
+      <div class="saved-section">
+
+        <div class="saved-heading">
+          <span>Saved words</span>
+          <span class="saved-count">
+            ${data.words.length}
+          </span>
+        </div>
+
+        <div id="saved-list"></div>
+      </div>
+
     </div>
-  </div>`);
+  `);
 
   renderMeaningRows();
   renderSavedWords();
@@ -949,6 +1417,7 @@ function renderAdd(){
     syncMeanings();
     meanings.push("");
     renderMeaningRows();
+
     document.querySelector(
       ".meaning-row:last-child input"
     )?.focus();
@@ -964,59 +1433,99 @@ function syncMeanings(){
 }
 
 function renderMeaningRows(){
-  $("#meaning-rows").innerHTML=meanings.map((m,i)=>`
-    <div class="meaning-row">
-      <input class="text-field meaning-input"
-        maxlength="200"
-        aria-label="Anlam ${i+1}"
-        placeholder="Meaning ${i+1}"
-        value="${esc(m)}">
-      <button type="button" class="remove"
-        data-remove="${i}"
-        aria-label="Anlamı sil">×</button>
-    </div>
-  `).join("");
+  $("#meaning-rows").innerHTML=
+    meanings.map((m,i)=>`
+      <div class="meaning-row">
+
+        <input
+          class="text-field meaning-input"
+          maxlength="200"
+          aria-label="Anlam ${i+1}"
+          placeholder="Meaning ${i+1}"
+          value="${esc(m)}">
+
+        <button
+          type="button"
+          class="remove"
+          data-remove="${i}"
+          aria-label="Anlamı sil">
+          ×
+        </button>
+
+      </div>
+    `).join("");
 
   document.querySelectorAll("[data-remove]").forEach(b=>{
     b.onclick=()=>{
       syncMeanings();
+
       if(meanings.length>1){
-        meanings.splice(Number(b.dataset.remove),1);
+        meanings.splice(
+          Number(b.dataset.remove),
+          1
+        );
       }else{
         meanings=[""];
       }
+
       renderMeaningRows();
     };
   });
 }
 
+/* SAVED WORDS */
+
 function renderSavedWords(){
   $("#saved-list").innerHTML=data.words.length
-  ?data.words.map(w=>`
-    <div class="saved-item">
-      <div style="min-width:0">
-        <strong>${esc(w.en)}</strong>
-        <p>${(w.meanings||[])
-          .map(m=>esc(m.tr)).join(" · ")}</p>
+    ?data.words.map(w=>`
+      <div class="saved-item">
+
+        <div style="min-width:0">
+          <strong>${esc(w.en)}</strong>
+
+          <p>
+            ${(w.meanings||[])
+              .map(m=>esc(m.tr))
+              .join(" · ")}
+          </p>
+        </div>
+
+        <div class="saved-actions">
+
+          <button
+            type="button"
+            class="icon-button"
+            data-edit="${esc(w.id)}"
+            aria-label="Kelimeyi düzenle">
+            ✎
+          </button>
+
+          <button
+            type="button"
+            class="icon-button"
+            data-delete="${esc(w.id)}"
+            aria-label="Kelimeyi sil">
+            ×
+          </button>
+
+        </div>
+
       </div>
-      <div class="saved-actions">
-        <button type="button" class="icon-button"
-          data-edit="${esc(w.id)}"
-          aria-label="Kelimeyi düzenle">✎</button>
-        <button type="button" class="icon-button"
-          data-delete="${esc(w.id)}"
-          aria-label="Kelimeyi sil">×</button>
-      </div>
-    </div>
-  `).join("")
-  :`<p class="page-subtitle">
-      No saved words yet.
-    </p>`;
+    `).join("")
+    :`
+      <p class="page-subtitle">
+        No saved words yet.
+      </p>
+    `;
 
   document.querySelectorAll("[data-edit]").forEach(b=>{
     b.onclick=()=>{
       editing=b.dataset.edit;
-      const w=data.words.find(x=>x.id===editing);
+
+      const w=data.words.find(
+        x=>x.id===editing
+      );
+
       meanings=w.meanings.map(m=>m.tr);
       renderAdd();
     };
@@ -1031,12 +1540,15 @@ function renderSavedWords(){
       );
 
       if(w){
-        w.meanings.forEach(m=>{
-          Object.keys(data.reviews).forEach(key=>{
-            if(key.startsWith(m.id+"|")){
-              delete data.reviews[key];
-            }
-          });
+        const ids=[
+          "word:"+w.id,
+          ...w.meanings.map(m=>m.id)
+        ];
+
+        Object.keys(data.reviews).forEach(key=>{
+          if(ids.some(id=>key.startsWith(id+"|"))){
+            delete data.reviews[key];
+          }
         });
       }
 
@@ -1046,20 +1558,27 @@ function renderSavedWords(){
 
       save();
       resetDeck();
+
       editing=null;
       meanings=[""];
+
       renderAdd();
     };
   });
 }
 
+/* SAVE WORD */
+
 function saveWord(){
   syncMeanings();
 
   const en=$("#english").value.trim();
-  const values=[...new Set(
-    meanings.map(m=>m.trim()).filter(Boolean)
-  )];
+
+  const values=[
+    ...new Set(
+      meanings.map(m=>m.trim()).filter(Boolean)
+    )
+  ];
 
   if(!en||!values.length){
     $("#error").textContent=
@@ -1068,10 +1587,13 @@ function saveWord(){
   }
 
   if(editing){
-    const w=data.words.find(x=>x.id===editing);
-    const old=w.meanings;
+    const w=data.words.find(
+      x=>x.id===editing
+    );
 
+    const old=w.meanings;
     w.en=en;
+
     w.meanings=values.map(tr=>({
       id:old.find(m=>
         m.tr.toLocaleLowerCase("tr")===
@@ -1084,18 +1606,24 @@ function saveWord(){
       id:uid(),
       en,
       meanings:values.map(tr=>({
-        id:uid(),tr
+        id:uid(),
+        tr
       }))
     });
   }
 
   save();
+
   editing=null;
   meanings=[""];
+
   resetDeck();
+
   page="study";
   render();
 }
+
+/* START APPLICATION */
 
 resetDeck();
 render();
